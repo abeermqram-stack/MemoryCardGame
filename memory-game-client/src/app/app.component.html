@@ -1,0 +1,386 @@
+<div class="page-wrapper">
+  <!-- الشريط العلوي -->
+  <header class="header-bar">
+    <div class="header-container">
+      <h1 class="site-title" (click)="currentView = 'game'">لعبة بطاقات الذاكرة</h1>
+
+      <nav class="nav-tabs">
+        <!-- زر اللعب -->
+        <button
+          type="button"
+          class="tab-btn"
+          [ngClass]="{ 'active': currentView === 'game' }"
+          (click)="currentView = 'game'">
+          اللعب
+        </button>
+
+        <!-- زر خاص باللاعبة (Player) -->
+        <button
+          type="button"
+          class="tab-btn"
+          [ngClass]="{ 'active': currentView === 'playerAuth' }"
+          (click)="currentView = 'playerAuth'">
+          {{ loggedInPlayer ? ('حسابي وتقدم اللاعبات (' + loggedInPlayer.username + ')') : 'تسجيل دخول / حساب جديد' }}
+        </button>
+
+        <!-- زر خاص ومستقل بالمشرف (Admin) -->
+        <button
+          type="button"
+          class="tab-btn admin-tab-btn"
+          [ngClass]="{ 'active': currentView === 'admin' }"
+          (click)="currentView = 'admin'">
+          دخول المشرف (Admin)
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ==================================================================== -->
+  
+ 
+  <main class="container" *ngIf="currentView === 'game'">
+    <!-- شريط ترحيب باللاعبة المسجلة -->
+    <div class="player-welcome-bar" *ngIf="loggedInPlayer">
+      <span>مرحباً بكِ <strong>{{ loggedInPlayer.username }}</strong> — يمكنكِ متابعة جدول التقدم والنتائج من تبويب حسابكِ.</span>
+      <button type="button" class="btn-outline-sm" (click)="currentView = 'playerAuth'">عرض جدول التقدم</button>
+    </div>
+
+    <!-- شريط المستوى والعدادات الثلاثة -->
+    <section class="top-bar">
+      <div class="level-buttons">
+        <button
+          type="button"
+          class="level-btn"
+          [ngClass]="{ 'active': selectedLevel === 1 }"
+          (click)="startNewGame(1)">
+          المستوى الأول (6 أزواج)
+        </button>
+        <button
+          type="button"
+          class="level-btn"
+          [ngClass]="{ 'active': selectedLevel === 2 }"
+          (click)="startNewGame(2)">
+          المستوى الثاني (10 أزواج)
+        </button>
+      </div>
+
+      <div class="counters">
+        <div class="counter-item">
+          <span>المحاولات:</span>
+          <strong>{{ attempts }}</strong>
+        </div>
+        <div class="counter-item">
+          <span>الوقت:</span>
+          <strong>{{ elapsedSeconds | timeFormat }}</strong>
+        </div>
+        <div class="counter-item">
+          <span>النقاط:</span>
+          <strong>{{ currentScore | number }}</strong>
+        </div>
+      </div>
+
+      <button type="button" class="restart-btn" (click)="startNewGame(selectedLevel)">
+        إعادة اللعب
+      </button>
+    </section>
+
+    <!-- رسالة الفوز عند إيجاد جميع الأزواج (*ngIf) -->
+    <div class="win-banner" *ngIf="isGameWon">
+      <div>
+        <strong>مبروك الفوز {{ loggedInPlayer ? ('يا ' + loggedInPlayer.username) : '' }}!</strong>
+        <span>أنهيتِ المستوى في {{ attempts }} محاولة خلال {{ elapsedSeconds | timeFormat }} وحصلتِ على {{ currentScore | number }} نقطة.</span>
+      </div>
+      <div class="auth-btns-row">
+        <button type="button" class="btn-primary" (click)="startNewGame(selectedLevel)">
+          لعب مرة أخرى
+        </button>
+        <button
+          type="button"
+          class="btn-outline"
+          *ngIf="loggedInPlayer"
+          (click)="currentView = 'playerAuth'">
+          مشاهدة جدول التقدم
+        </button>
+      </div>
+    </div>
+
+    <!-- شبكة البطاقات (*ngFor) -->
+    <section
+      class="cards-grid"
+      [ngClass]="selectedLevel === 1 ? 'grid-6' : 'grid-10'">
+      <div
+        class="memory-card"
+        *ngFor="let card of boardCards"
+        [ngClass]="{
+          'flipped': card.isFlipped || card.isMatched,
+          'matched': card.isMatched
+        }"
+        (click)="onCardClick(card)">
+        <div class="card-inner">
+          <div class="card-face card-back">؟</div>
+          <div class="card-face card-front">
+            <span class="card-icon">{{ card.icon }}</span>
+            <span class="card-label">{{ card.title }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ==================================================================== -->
+  <!-- 2. صفحة اللاعبة: (تسجيل دخول / إنشاء حساب) ثم يظهر جدول اللاعبين وتقدمهم هنا -->
+  <!-- ==================================================================== -->
+  <main class="container" *ngIf="currentView === 'playerAuth'">
+    <!-- قبل تسجيل الدخول: نموذج خيارين (تسجيل دخول أو إنشاء حساب جديد) -->
+    <section class="card-box auth-card-box" *ngIf="!loggedInPlayer">
+      <div class="choice-tabs">
+        <button
+          type="button"
+          class="choice-btn"
+          [ngClass]="{ 'active': playerAuthMode === 'login' }"
+          (click)="playerAuthMode = 'login'; playerAuthMessage = ''">
+          تسجيل دخول لاعبة
+        </button>
+        <button
+          type="button"
+          class="choice-btn"
+          [ngClass]="{ 'active': playerAuthMode === 'register' }"
+          (click)="playerAuthMode = 'register'; playerAuthMessage = ''">
+          إنشاء حساب جديد
+        </button>
+      </div>
+
+      <!-- الخيار الأول: تسجيل دخول -->
+      <form class="vertical-form" *ngIf="playerAuthMode === 'login'" (ngSubmit)="loginAsPlayer()">
+        <div class="form-field">
+          <label>البريد الإلكتروني</label>
+          <input
+            type="email"
+            name="pEmail"
+            [(ngModel)]="playerLoginEmail"
+            placeholder="مثال: noura@memorygame.sa"
+            required />
+        </div>
+        <div class="form-field">
+          <label>كلمة المرور</label>
+          <input
+            type="password"
+            name="pPass"
+            [(ngModel)]="playerLoginPassword"
+            placeholder="كلمة المرور"
+            required />
+        </div>
+        <button type="submit" class="btn-primary">دخول وعرض جدول التقدم</button>
+      </form>
+
+      <!-- الخيار الثاني: إنشاء حساب جديد -->
+      <form class="vertical-form" *ngIf="playerAuthMode === 'register'" (ngSubmit)="registerNewPlayer()">
+        <div class="form-field">
+          <label>الاسم</label>
+          <input
+            type="text"
+            name="regName"
+            [(ngModel)]="playerRegName"
+            placeholder="اكتبي اسمكِ هنا"
+            required />
+        </div>
+        <div class="form-field">
+          <label>البريد الإلكتروني</label>
+          <input
+            type="email"
+            name="regEmail"
+            [(ngModel)]="playerRegEmail"
+            placeholder="example@email.com"
+            required />
+        </div>
+        <div class="form-field">
+          <label>كلمة المرور</label>
+          <input
+            type="password"
+            name="regPass"
+            [(ngModel)]="playerRegPassword"
+            placeholder="اختاري كلمة مرور"
+            required />
+        </div>
+        <button type="submit" class="btn-primary">إنشاء الحساب وعرض جدول التقدم</button>
+      </form>
+
+      <p class="error-text" *ngIf="playerAuthMessage">{{ playerAuthMessage }}</p>
+    </section>
+
+    <!-- بعد تسجيل الدخول أو إنشاء الحساب: يظهر هنا معلومات اللاعبة + جدول اللاعبين وتقدمهم -->
+    <div *ngIf="loggedInPlayer">
+      <section class="card-box">
+        <div class="box-header">
+          <div>
+            <h2>مرحباً بكِ {{ loggedInPlayer.username }}</h2>
+            <p class="sub-note">البريد الإلكتروني: {{ loggedInPlayer.email }}</p>
+          </div>
+          <div class="auth-btns-row">
+            <button type="button" class="btn-primary" (click)="currentView = 'game'">
+              الذهاب للعب
+            </button>
+            <button type="button" class="btn-outline" (click)="logoutPlayer()">
+              تسجيل خروج
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- جدول اللاعبين ومستوى تقدمهم ونتائجهم (يظهر للاعبة بعد الدخول بدون صلاحيات حذف) -->
+      <section class="card-box">
+        <h2>جدول اللاعبين ومستوى تقدمهم</h2>
+        <table class="simple-table">
+          <thead>
+            <tr>
+              <th>اسم اللاعبة</th>
+              <th>المستوى المكتمل</th>
+              <th>عدد المحاولات</th>
+              <th>الوقت المستغرق</th>
+              <th>النقاط</th>
+              <th>التاريخ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let s of sessions">
+              <td>{{ (s.player?.username || 'لاعبة') | uppercase }}</td>
+              <td>المستوى {{ s.level }} ({{ s.pairsCount }} أزواج)</td>
+              <td>{{ s.attempts }} محاولة</td>
+              <td>{{ s.timeElapsedSeconds | timeFormat }}</td>
+              <td><strong>{{ s.score | number }} نقطة</strong></td>
+              <td>{{ s.playedAt | date:'shortDate' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </div>
+  </main>
+
+  <!-- ==================================================================== -->
+  <!-- 3. صفحة المشرف (Admin فقط): صلاحية الحذف والتعديل والإضافة -->
+  <!-- ==================================================================== -->
+  <main class="container" *ngIf="currentView === 'admin'">
+    <!-- شاشة تسجيل دخول المشرف -->
+    <section class="card-box auth-card-box" *ngIf="!loggedInAdmin">
+      <h2>تسجيل دخول المشرف (Admin)</h2>
+      <p class="sub-note">هذه الصفحة مخصصة للمشرف فقط لإضافة وتعديل وحذف البطاقات والنتائج.</p>
+
+      <form class="vertical-form" (ngSubmit)="loginAsAdmin()">
+        <div class="form-field">
+          <label>بريد المشرف</label>
+          <input
+            type="email"
+            name="adminEmail"
+            [(ngModel)]="adminEmail"
+            placeholder="abeer@gmail.com"
+            required />
+        </div>
+        <div class="form-field">
+          <label>كلمة المرور</label>
+          <input
+            type="password"
+            name="adminPassword"
+            [(ngModel)]="adminPassword"
+            placeholder="كلمة المرور"
+            required />
+        </div>
+        <button type="submit" class="btn-primary">دخول كمشرف (Admin)</button>
+      </form>
+      <p class="error-text" *ngIf="adminLoginError">{{ adminLoginError }}</p>
+    </section>
+
+    <!-- لوحة تحكم المشرف -->
+    <div *ngIf="loggedInAdmin">
+      <!-- إدارة البطاقات: إضافة + تعديل + حذف -->
+      <section class="card-box">
+        <div class="box-header">
+          <h2>لوحة المشرف: إدارة البطاقات ({{ loggedInAdmin.username }})</h2>
+          <button type="button" class="btn-outline" (click)="logoutAdmin()">خروج المشرف</button>
+        </div>
+
+        <form class="inline-form" (ngSubmit)="saveCard()">
+          <input
+            type="text"
+            name="title"
+            [(ngModel)]="cardForm.title"
+            placeholder="اسم البطاقة"
+            required />
+          <input
+            type="text"
+            name="icon"
+            [(ngModel)]="cardForm.icon"
+            placeholder="الرمز (مثال: 🚀)"
+            class="small-input"
+            required />
+          <select name="level" [(ngModel)]="cardForm.levelDifficulty">
+            <option [ngValue]="1">المستوى الأول</option>
+            <option [ngValue]="2">المستوى الثاني</option>
+          </select>
+          <button type="submit" class="btn-primary">
+            {{ isEditingCard ? 'حفظ التعديل' : 'إضافة بطاقة' }}
+          </button>
+          <button
+            type="button"
+            class="btn-outline"
+            *ngIf="isEditingCard"
+            (click)="resetForm()">
+            إلغاء
+          </button>
+        </form>
+
+        <table class="simple-table">
+          <thead>
+            <tr>
+              <th>الرمز</th>
+              <th>اسم البطاقة</th>
+              <th>المستوى</th>
+              <th>العمليات (تعديل / حذف)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let c of allCards">
+              <td class="icon-cell">{{ c.icon }}</td>
+              <td>{{ c.title }}</td>
+              <td>المستوى {{ c.levelDifficulty }}</td>
+              <td>
+                <button type="button" class="btn-edit" (click)="editCard(c)">تعديل</button>
+                <button type="button" class="btn-delete" (click)="deleteCard(c.cardId)">حذف</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- إدارة وحذف نتائج اللاعبات (للأدمن فقط) -->
+      <section class="card-box">
+        <h2>إدارة وحذف نتائج اللاعبات</h2>
+        <table class="simple-table">
+          <thead>
+            <tr>
+              <th>اللاعبة</th>
+              <th>المستوى</th>
+              <th>المحاولات</th>
+              <th>الوقت</th>
+              <th>النقاط</th>
+              <th>حذف السجل</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let s of sessions">
+              <td>{{ s.player?.username || 'لاعبة' }}</td>
+              <td>المستوى {{ s.level }}</td>
+              <td>{{ s.attempts }}</td>
+              <td>{{ s.timeElapsedSeconds | timeFormat }}</td>
+              <td><strong>{{ s.score | number }}</strong></td>
+              <td>
+                <button type="button" class="btn-delete" (click)="deleteSession(s.sessionId)">
+                  حذف
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </div>
+  </main>
+</div>

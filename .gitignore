@@ -1,0 +1,13 @@
+# .NET Build Outputs
+bin/
+obj/
+.vs/
+*.user
+*.suo
+
+# Angular / Node Build Outputs
+node_modules/
+dist/
+.angular/
+npm-debug.log*
+

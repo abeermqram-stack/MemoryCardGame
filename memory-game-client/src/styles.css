@@ -1,0 +1,33 @@
+:root {
+  /* لوحة الألوان الدافئة والأنيقة (Warm Coffee, Caramel & Cream Palette) */
+  --espresso-dark: #2e1e17;    /* اللون الأول من اليسار: بني إسبريسو داكن */
+  --mocha-brown: #593426;      /* اللون الثاني: بني موكا غني */
+  --cinnamon-roast: #8c583a;   /* اللون الثالث: بني قرفة دافئ (لون البطاقات) */
+  --caramel-tan: #c49a6c;      /* اللون الرابع: كراميل دافئ */
+  --warm-beige: #e6d7be;       /* اللون الخامس: بيج كريمي دافئ */
+  --ivory-cream: #f9f6f0;      /* اللون السادس: أوف وايت كريمي ناعم */
+  --blush-cream: #ecd3c5;      /* خلفية إطار لوحة البطاقات كما في الصورة */
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, system-ui, -apple-system, sans-serif;
+  background-color: var(--ivory-cream);
+  color: var(--espresso-dark);
+  min-height: 100vh;
+  direction: rtl;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+select {
+  font-family: inherit;
+  font-size: inherit;
+}

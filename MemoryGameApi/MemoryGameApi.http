@@ -1,0 +1,53 @@
+@baseUrl = http://localhost:5150
+
+### 1. Get all cards
+GET {{baseUrl}}/api/Cards
+Accept: application/json
+
+### 2. Get Level 1 cards (6 pairs) - Route Constraint :int:range(1,2)
+GET {{baseUrl}}/api/Cards/level/1
+Accept: application/json
+
+### 3. Get Level 2 cards (10 pairs) - Route Constraint :int:range(1,2)
+GET {{baseUrl}}/api/Cards/level/2
+Accept: application/json
+
+### 4. Add a new Card (POST - [FromBody])
+POST {{baseUrl}}/api/Cards
+Content-Type: application/json
+
+{
+  "title": "كأس البطولة",
+  "icon": "🏆",
+  "category": "رياضة",
+  "accentColor": "#14b8a6",
+  "levelDifficulty": 1,
+  "isActive": true
+}
+
+### 5. Get all Players (with 1:1 Profile, 1:N GameSessions, N:M Achievements)
+GET {{baseUrl}}/api/Players
+Accept: application/json
+
+### 6. Search Players by alphabetical keyword - Route Constraint :alpha
+GET {{baseUrl}}/api/Players/search/sara
+Accept: application/json
+
+### 7. Get Paged GameSessions ([FromQuery] parameters)
+GET {{baseUrl}}/api/GameSessions/paged?pageIndex=1&pageSize=10
+Accept: application/json
+
+### 8. Record a new GameSession (POST - [FromBody])
+POST {{baseUrl}}/api/GameSessions
+Content-Type: application/json
+
+{
+  "playerId": 1,
+  "level": 1,
+  "pairsCount": 6,
+  "attempts": 8,
+  "timeElapsedSeconds": 24,
+  "score": 1150,
+  "isCompleted": true
+}
+
