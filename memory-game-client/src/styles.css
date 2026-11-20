@@ -1,12 +1,12 @@
 :root {
   /* لوحة الألوان الدافئة والأنيقة (Warm Coffee, Caramel & Cream Palette) */
-  --espresso-dark: #2e1e17;    /* اللون الأول من اليسار: بني إسبريسو داكن */
-  --mocha-brown: #593426;      /* اللون الثاني: بني موكا غني */
-  --cinnamon-roast: #8c583a;   /* اللون الثالث: بني قرفة دافئ (لون البطاقات) */
-  --caramel-tan: #c49a6c;      /* اللون الرابع: كراميل دافئ */
-  --warm-beige: #e6d7be;       /* اللون الخامس: بيج كريمي دافئ */
-  --ivory-cream: #f9f6f0;      /* اللون السادس: أوف وايت كريمي ناعم */
-  --blush-cream: #ecd3c5;      /* خلفية إطار لوحة البطاقات كما في الصورة */
+  --espresso-dark: #2e1e17;
+  --mocha-brown: #593426;
+  --cinnamon-roast: #8c583a;
+  --caramel-tan: #c49a6c;
+  --warm-beige: #e6d7be;
+  --ivory-cream: #f9f6f0;
+  --blush-cream: #ecd3c5;
 }
 
 * {
@@ -30,4 +30,244 @@ input,
 select {
   font-family: inherit;
   font-size: inherit;
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* الحاوية الرئيسية */
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem;
+}
+
+/* صناديق وجداول الصفحات المشتركة */
+.card-box {
+  background-color: #ecd3c5;
+  border: 2px solid #593426;
+  border-radius: 18px;
+  padding: 1.35rem;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 4px 12px rgba(46, 30, 23, 0.08);
+}
+
+.card-box h2 {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  color: #2e1e17;
+}
+
+.box-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.box-header h2 {
+  margin-bottom: 0;
+}
+
+.auth-card-box {
+  max-width: 460px;
+  margin: 1.5rem auto;
+}
+
+.choice-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem;
+  background-color: #e6d7be;
+  padding: 0.35rem;
+  border-radius: 12px;
+  border: 1px solid #c49a6c;
+  margin-bottom: 1.2rem;
+}
+
+.choice-btn {
+  background: transparent;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 8px;
+  font-weight: 700;
+  color: #593426;
+  cursor: pointer;
+}
+
+.choice-btn.active {
+  background-color: #593426;
+  color: #f9f6f0;
+}
+
+.vertical-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.form-field label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #2e1e17;
+}
+
+.form-field input {
+  background-color: #f9f6f0;
+  border: 1.5px solid #c49a6c;
+  color: #2e1e17;
+  padding: 0.55rem 0.75rem;
+  border-radius: 10px;
+}
+
+.form-field input:focus {
+  outline: none;
+  border-color: #593426;
+}
+
+.sub-note {
+  font-size: 0.86rem;
+  color: #593426;
+  margin-bottom: 0.5rem;
+}
+
+.auth-btns-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.inline-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.inline-form input,
+.inline-form select {
+  background-color: #f9f6f0;
+  border: 1.5px solid #8c583a;
+  color: #2e1e17;
+  padding: 0.45rem 0.75rem;
+  border-radius: 10px;
+  flex: 1;
+  min-width: 150px;
+}
+
+.inline-form input.small-input {
+  flex: 0 0 130px;
+  min-width: 110px;
+}
+
+.btn-primary,
+.btn-outline,
+.btn-outline-sm {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background-color: #593426;
+  color: #f9f6f0;
+  border: 1.5px solid #2e1e17;
+  padding: 0.45rem 1.15rem;
+  border-radius: 20px;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #2e1e17;
+}
+
+.btn-outline {
+  background-color: #f9f6f0;
+  border: 1.5px solid #593426;
+  color: #593426;
+  padding: 0.45rem 0.95rem;
+  border-radius: 20px;
+}
+
+.btn-outline-sm {
+  background: #f9f6f0;
+  border: 1.5px solid #593426;
+  color: #593426;
+  padding: 0.25rem 0.75rem;
+  border-radius: 16px;
+  font-size: 0.8rem;
+}
+
+.simple-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: right;
+  background-color: #f9f6f0;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1.5px solid #8c583a;
+}
+
+.simple-table th,
+.simple-table td {
+  padding: 0.75rem 0.85rem;
+  border-bottom: 1px solid #e6d7be;
+  font-size: 0.9rem;
+  color: #2e1e17;
+}
+
+.simple-table th {
+  background-color: #e6d7be;
+  color: #2e1e17;
+  font-size: 0.84rem;
+  font-weight: 800;
+  border-bottom: 1.5px solid #8c583a;
+}
+
+.icon-cell {
+  font-size: 1.35rem;
+}
+
+.btn-edit {
+  background-color: #e6d7be;
+  color: #2e1e17;
+  border: 1px solid #8c583a;
+  padding: 0.25rem 0.7rem;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  margin-left: 0.35rem;
+  cursor: pointer;
+}
+
+.btn-delete {
+  background-color: #964f37;
+  color: #f9f6f0;
+  border: 1px solid #2e1e17;
+  padding: 0.25rem 0.7rem;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.error-text {
+  color: #964f37;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-top: 0.5rem;
 }

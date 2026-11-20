@@ -1,0 +1,67 @@
+.profile-stats-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.stat-pill {
+  background-color: #f9f6f0;
+  border: 1.5px solid #c49a6c;
+  border-radius: 12px;
+  padding: 0.5rem 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.88rem;
+  color: #593426;
+}
+
+.stat-pill strong {
+  color: #2e1e17;
+  font-size: 0.98rem;
+}
+
+.badges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 0.75rem;
+}
+
+.badge-card {
+  background-color: #f9f6f0;
+  border: 1.5px solid #8c583a;
+  border-radius: 14px;
+  padding: 0.8rem 0.95rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+}
+
+.badge-icon {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.badge-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.badge-title {
+  font-size: 0.94rem;
+  color: #2e1e17;
+}
+
+.badge-desc {
+  font-size: 0.8rem;
+  color: #593426;
+}
+
+.badge-meta {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #8c583a;
+}
+

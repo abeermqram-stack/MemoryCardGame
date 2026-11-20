@@ -1,0 +1,172 @@
+<main class="container">
+  <!-- قبل تسجيل الدخول: خياران (تسجيل دخول أو إنشاء حساب جديد) -->
+  <section class="card-box auth-card-box" *ngIf="!loggedInPlayer">
+    <div class="choice-tabs">
+      <button
+        type="button"
+        class="choice-btn"
+        [ngClass]="{ 'active': playerAuthMode === 'login' }"
+        (click)="playerAuthMode = 'login'; playerAuthMessage = ''">
+        تسجيل دخول لاعبة
+      </button>
+      <button
+        type="button"
+        class="choice-btn"
+        [ngClass]="{ 'active': playerAuthMode === 'register' }"
+        (click)="playerAuthMode = 'register'; playerAuthMessage = ''">
+        إنشاء حساب جديد
+      </button>
+    </div>
+
+    <!-- الخيار الأول: تسجيل دخول (Two-Way Binding + Property Binding + Event Binding) -->
+    <form class="vertical-form" *ngIf="playerAuthMode === 'login'" (ngSubmit)="loginAsPlayer()">
+      <div class="form-field">
+        <label>البريد الإلكتروني</label>
+        <input
+          type="email"
+          name="pEmail"
+          [(ngModel)]="playerLoginEmail"
+          placeholder="مثال: noura@memorygame.sa"
+          required />
+      </div>
+      <div class="form-field">
+        <label>كلمة المرور</label>
+        <input
+          type="password"
+          name="pPass"
+          [(ngModel)]="playerLoginPassword"
+          placeholder="كلمة المرور"
+          required />
+      </div>
+      <button
+        type="submit"
+        class="btn-primary"
+        [disabled]="!playerLoginEmail.trim() || !playerLoginPassword.trim()">
+        دخول وعرض جدول التقدم
+      </button>
+    </form>
+
+    <!-- الخيار الثاني: إنشاء حساب جديد -->
+    <form class="vertical-form" *ngIf="playerAuthMode === 'register'" (ngSubmit)="registerNewPlayer()">
+      <div class="form-field">
+        <label>الاسم</label>
+        <input
+          type="text"
+          name="regName"
+          [(ngModel)]="playerRegName"
+          placeholder="اكتبي اسمكِ هنا"
+          required />
+      </div>
+      <div class="form-field">
+        <label>البريد الإلكتروني</label>
+        <input
+          type="email"
+          name="regEmail"
+          [(ngModel)]="playerRegEmail"
+          placeholder="example@email.com"
+          required />
+      </div>
+      <div class="form-field">
+        <label>كلمة المرور</label>
+        <input
+          type="password"
+          name="regPass"
+          [(ngModel)]="playerRegPassword"
+          placeholder="اختاري كلمة مرور"
+          required />
+      </div>
+      <button
+        type="submit"
+        class="btn-primary"
+        [disabled]="!playerRegName.trim() || !playerRegEmail.trim() || !playerRegPassword.trim()">
+        إنشاء الحساب وعرض جدول التقدم
+      </button>
+    </form>
+
+    <p class="error-text" *ngIf="playerAuthMessage">{{ playerAuthMessage }}</p>
+  </section>
+
+  <!-- بعد تسجيل الدخول أو إنشاء الحساب -->
+  <div *ngIf="loggedInPlayer">
+    <!-- معلومات اللاعبة وملفها الشخصي (علاقة 1:1 PlayerProfile) -->
+    <section class="card-box">
+      <div class="box-header">
+        <div>
+          <h2>
+            {{ loggedInPlayer.profile?.avatarEmoji || '🎮' }}
+            مرحباً بكِ {{ loggedInPlayer.username }}
+          </h2>
+          <p class="sub-note">البريد الإلكتروني: {{ loggedInPlayer.email }}</p>
+        </div>
+        <div class="auth-btns-row">
+          <a class="btn-primary" [routerLink]="['/game']">الذهاب للعب</a>
+          <button type="button" class="btn-outline" (click)="logoutPlayer()">
+            تسجيل خروج
+          </button>
+        </div>
+      </div>
+
+      <div class="profile-stats-row" *ngIf="loggedInPlayer.profile">
+        <div class="stat-pill">
+          <span>أعلى نقاط:</span>
+          <strong>{{ loggedInPlayer.profile.highestScore | number }}</strong>
+        </div>
+        <div class="stat-pill">
+          <span>عدد الجولات:</span>
+          <strong>{{ loggedInPlayer.profile.totalGamesPlayed }}</strong>
+        </div>
+        <div class="stat-pill">
+          <span>الثيم المفضل:</span>
+          <strong>{{ loggedInPlayer.profile.preferredTheme }}</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- أوسمة وإنجازات اللاعبة (علاقة N:M PlayerAchievements) -->
+    <section
+      class="card-box"
+      *ngIf="loggedInPlayer.playerAchievements && loggedInPlayer.playerAchievements.length > 0">
+      <h2>أوسمتي وإنجازاتي</h2>
+      <div class="badges-grid">
+        <div class="badge-card" *ngFor="let pa of loggedInPlayer.playerAchievements">
+          <span class="badge-icon">{{ pa.achievement?.badgeIcon || '🏆' }}</span>
+          <div class="badge-info">
+            <strong class="badge-title">{{ pa.achievement?.title }}</strong>
+            <p class="badge-desc">{{ pa.achievement?.description }}</p>
+            <span class="badge-meta">
+              +{{ pa.achievement?.bonusPoints | number }} نقطة • {{ pa.unlockedAt | date:'shortDate' }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- جدول اللاعبين ومستوى تقدمهم (علاقة 1:N GameSessions) -->
+    <section class="card-box">
+      <h2>جدول اللاعبين ومستوى تقدمهم</h2>
+      <table class="simple-table">
+        <thead>
+          <tr>
+            <th>اسم اللاعبة</th>
+            <th>المستوى المكتمل</th>
+            <th>عدد المحاولات</th>
+            <th>الوقت المستغرق</th>
+            <th>النقاط</th>
+            <th>التاريخ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let s of sessions">
+            <td>{{ (s.player?.username || 'لاعبة') | uppercase }}</td>
+            <td>المستوى {{ s.level }} ({{ s.pairsCount }} أزواج)</td>
+            <td>{{ s.attempts }} محاولة</td>
+            <td>{{ s.timeElapsedSeconds | timeFormat }}</td>
+            <td><strong>{{ s.score | number }} نقطة</strong></td>
+            <td>{{ s.playedAt | date:'shortDate' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </div>
+</main>
+

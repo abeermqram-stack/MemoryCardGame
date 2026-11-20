@@ -16,20 +16,30 @@ namespace MemoryGameApi.Services
         public List<Player> GetAllPlayers() =>
             _dbContext.Players
                 .Include(p => p.Profile)
+                .Include(p => p.GameSessions)
+                .Include(p => p.PlayerAchievements)
+                    .ThenInclude(pa => pa.Achievement)
                 .ToList();
 
         public Player? GetPlayerById(int id) =>
             _dbContext.Players
                 .Include(p => p.Profile)
+                .Include(p => p.GameSessions)
+                .Include(p => p.PlayerAchievements)
+                    .ThenInclude(pa => pa.Achievement)
                 .FirstOrDefault(p => p.PlayerId == id);
 
         public Player? Login(string email, string password) =>
             _dbContext.Players
                 .Include(p => p.Profile)
+                .Include(p => p.GameSessions)
+                .Include(p => p.PlayerAchievements)
+                    .ThenInclude(pa => pa.Achievement)
                 .FirstOrDefault(p => p.Email == email && p.Password == password);
 
         public List<Player> SearchPlayersByName(string keyword) =>
             _dbContext.Players
+                .Include(p => p.Profile)
                 .Where(p => p.Username.Contains(keyword) || p.Email.Contains(keyword))
                 .ToList();
 

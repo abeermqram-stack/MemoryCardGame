@@ -23,9 +23,15 @@ namespace MemoryGameApi.Controllers
 
         // [FromQuery] Parameter Binding
         [HttpGet("paged")]
-        public IActionResult GetPagedSessions([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
+        public IActionResult GetPagedSessions(
+            [FromQuery] int pageIndex = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] int? level = null)
         {
-            return Ok(_sessionService.GetPagedSessions(pageIndex, pageSize));
+            if (pageIndex < 1 || pageSize < 1)
+                return BadRequest("PageIndex and PageSize must be greater than 0.");
+
+            return Ok(_sessionService.GetPagedSessions(pageIndex, pageSize, level));
         }
 
         [HttpGet("{id:int:min(1)}")]

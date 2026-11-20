@@ -39,6 +39,12 @@ namespace MemoryGameApi.Services
             return activeCards;
         }
 
+        public List<CardItem> SearchCards(string keyword) =>
+            _dbContext.CardItems
+                .Where(c => c.Title.Contains(keyword) || c.Category.Contains(keyword))
+                .OrderBy(c => c.CardId)
+                .ToList();
+
         public CardItem? GetCardById(int id) =>
             _dbContext.CardItems.Find(id);
 
@@ -62,6 +68,17 @@ namespace MemoryGameApi.Services
             existing.LevelDifficulty = updatedCard.LevelDifficulty;
             existing.IsActive = updatedCard.IsActive;
 
+            _dbContext.SaveChanges();
+            return true;
+        }
+
+        public bool UpdateCardTitle(int id, string newTitle)
+        {
+            var existing = _dbContext.CardItems.Find(id);
+            if (existing == null)
+                return false;
+
+            existing.Title = newTitle;
             _dbContext.SaveChanges();
             return true;
         }

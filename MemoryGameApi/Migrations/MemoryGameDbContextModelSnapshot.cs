@@ -340,10 +340,10 @@ namespace MemoryGameApi.Migrations
                         {
                             PlayerId = 1,
                             CreatedAt = new DateTime(2026, 11, 1, 12, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "sara@memorygame.sa",
-                            Password = "123456",
+                            Email = "abeer@gmail.com",
+                            Password = "1234",
                             Role = "Admin",
-                            Username = "سارة العتيبي"
+                            Username = "عبير مقرم"
                         },
                         new
                         {

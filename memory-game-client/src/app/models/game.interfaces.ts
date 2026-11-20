@@ -22,12 +22,41 @@ export interface IBoardCard {
   isMatched: boolean;
 }
 
+export interface IPlayerProfile {
+  profileId: number;
+  avatarEmoji: string;
+  preferredTheme: string;
+  highestScore: number;
+  totalGamesPlayed: number;
+  playerId: number;
+}
+
+export interface IAchievement {
+  achievementId: number;
+  title: string;
+  description: string;
+  badgeIcon: string;
+  bonusPoints: number;
+}
+
+export interface IPlayerAchievement {
+  playerId: number;
+  achievementId: number;
+  unlockedAt: string;
+  displayOrder: number;
+  achievement?: IAchievement;
+}
+
 export interface IPlayer {
   playerId: number;
   username: string;
   email: string;
   password?: string;
   role: string;
+  createdAt?: string;
+  profile?: IPlayerProfile;
+  gameSessions?: IGameSession[];
+  playerAchievements?: IPlayerAchievement[];
 }
 
 export interface IGameSession {
@@ -43,7 +72,7 @@ export interface IGameSession {
   player?: IPlayer;
 }
 
-// 2. Interfaces لتعريف تواقيع الدوال (Function Signatures)
+// 2. Interfaces لتعريف تواقيع الدوال (Function Signatures / Head for Functions)
 export interface IGameEngineService {
   buildBoardDeck(cards: ICardItem[], level: number): IBoardCard[];
   areCardsMatching(firstCard: IBoardCard, secondCard: IBoardCard): boolean;
@@ -53,12 +82,24 @@ export interface IGameEngineService {
 export interface IGameApiClient {
   getCardsByLevel(level: number): Observable<ICardItem[]>;
   getAllCards(): Observable<ICardItem[]>;
+  searchCards(keyword: string): Observable<ICardItem[]>;
   addCard(card: Omit<ICardItem, 'cardId'>): Observable<ICardItem>;
   updateCard(id: number, card: ICardItem): Observable<any>;
+  updateCardTitle(id: number, title: string): Observable<any>;
   deleteCard(id: number): Observable<any>;
   getAllSessions(): Observable<IGameSession[]>;
   addSession(session: IGameSession): Observable<IGameSession>;
   deleteSession(id: number): Observable<any>;
+  getPlayerById(id: number): Observable<IPlayer>;
   login(email: string, password: string): Observable<IPlayer>;
   registerPlayer(player: Partial<IPlayer>): Observable<IPlayer>;
+}
+
+export interface IAuthStateService {
+  getPlayer(): IPlayer | null;
+  setPlayer(player: IPlayer | null): void;
+  getAdmin(): IPlayer | null;
+  setAdmin(admin: IPlayer | null): void;
+  logoutPlayer(): void;
+  logoutAdmin(): void;
 }

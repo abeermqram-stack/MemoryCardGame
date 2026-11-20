@@ -12,7 +12,11 @@ Accept: application/json
 GET {{baseUrl}}/api/Cards/level/2
 Accept: application/json
 
-### 4. Add a new Card (POST - [FromBody])
+### 4. Search Cards by keyword ([FromQuery] binding)
+GET {{baseUrl}}/api/Cards/search?keyword=الفضاء
+Accept: application/json
+
+### 5. Add a new Card (POST - [FromBody])
 POST {{baseUrl}}/api/Cards
 Content-Type: application/json
 
@@ -25,19 +29,27 @@ Content-Type: application/json
   "isActive": true
 }
 
-### 5. Get all Players (with 1:1 Profile, 1:N GameSessions, N:M Achievements)
+### 6. Update Card Title Only (Specialized PUT - [FromRoute] + [FromBody] DTO)
+PUT {{baseUrl}}/api/Cards/1/update-title
+Content-Type: application/json
+
+{
+  "title": "صاروخ الفضاء السريع"
+}
+
+### 7. Get all Players (with 1:1 Profile, 1:N GameSessions, N:M Achievements)
 GET {{baseUrl}}/api/Players
 Accept: application/json
 
-### 6. Search Players by alphabetical keyword - Route Constraint :alpha
-GET {{baseUrl}}/api/Players/search/sara
+### 8. Search Players by alphabetical keyword - Route Constraint :alpha
+GET {{baseUrl}}/api/Players/search/noura
 Accept: application/json
 
-### 7. Get Paged GameSessions ([FromQuery] parameters)
+### 9. Get Paged GameSessions ([FromQuery] parameters)
 GET {{baseUrl}}/api/GameSessions/paged?pageIndex=1&pageSize=10
 Accept: application/json
 
-### 8. Record a new GameSession (POST - [FromBody])
+### 10. Record a new GameSession (POST - [FromBody])
 POST {{baseUrl}}/api/GameSessions
 Content-Type: application/json
 

@@ -1,0 +1,99 @@
+<main class="container">
+  <!-- شريط ترحيب باللاعبة المسجلة (*ngIf) -->
+  <div class="player-welcome-bar" *ngIf="loggedInPlayer">
+    <span>
+      مرحباً بكِ <strong>{{ loggedInPlayer.username }}</strong> — يمكنكِ متابعة جدول التقدم والإنجازات من صفحة حسابكِ.
+    </span>
+    <a class="btn-outline-sm" [routerLink]="['/player']">عرض جدول التقدم</a>
+  </div>
+
+  <!-- شريط المستوى والعدادات الثلاثة -->
+  <section class="top-bar">
+    <div class="level-buttons">
+      <button
+        type="button"
+        class="level-btn"
+        [ngClass]="{ 'active': selectedLevel === 1 }"
+        [disabled]="isBoardLocked"
+        (click)="startNewGame(1)">
+        المستوى الأول (6 أزواج)
+      </button>
+      <button
+        type="button"
+        class="level-btn"
+        [ngClass]="{ 'active': selectedLevel === 2 }"
+        [disabled]="isBoardLocked"
+        (click)="startNewGame(2)">
+        المستوى الثاني (10 أزواج)
+      </button>
+    </div>
+
+    <div class="counters">
+      <div class="counter-item">
+        <span>المحاولات:</span>
+        <strong>{{ attempts }}</strong>
+      </div>
+      <div class="counter-item">
+        <span>الوقت:</span>
+        <strong>{{ elapsedSeconds | timeFormat }}</strong>
+      </div>
+      <div class="counter-item">
+        <span>النقاط:</span>
+        <strong>{{ currentScore | number }}</strong>
+      </div>
+    </div>
+
+    <button
+      type="button"
+      class="restart-btn"
+      [disabled]="isBoardLocked"
+      (click)="startNewGame(selectedLevel)">
+      إعادة اللعب
+    </button>
+  </section>
+
+  <!-- رسالة الفوز عند إيجاد جميع الأزواج (*ngIf) -->
+  <div class="win-banner" *ngIf="isGameWon">
+    <div>
+      <strong>مبروك الفوز {{ loggedInPlayer ? ('يا ' + loggedInPlayer.username) : '' }}!</strong>
+      <span>أنهيتِ المستوى في {{ attempts }} محاولة خلال {{ elapsedSeconds | timeFormat }} وحصلتِ على {{ currentScore | number }} نقطة.</span>
+    </div>
+    <div class="auth-btns-row">
+      <button type="button" class="btn-primary" (click)="startNewGame(selectedLevel)">
+        لعب مرة أخرى
+      </button>
+      <a
+        class="btn-outline"
+        *ngIf="loggedInPlayer"
+        [routerLink]="['/player']">
+        مشاهدة جدول التقدم
+      </a>
+    </div>
+  </div>
+
+  <!-- شبكة البطاقات (*ngFor + Property Binding + Event Binding + [ngClass]) -->
+  <section
+    class="cards-grid"
+    [ngClass]="selectedLevel === 1 ? 'grid-6' : 'grid-10'">
+    <div
+      class="memory-card"
+      *ngFor="let card of boardCards"
+      [ngClass]="{
+        'flipped': card.isFlipped || card.isMatched,
+        'matched': card.isMatched
+      }"
+      [title]="card.category"
+      (click)="onCardClick(card)">
+      <div class="card-inner">
+        <div class="card-face card-back">؟</div>
+        <div
+          class="card-face card-front"
+          [style.border-color]="card.accentColor">
+          <span class="card-icon">{{ card.icon }}</span>
+          <span class="card-label">{{ card.title }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
