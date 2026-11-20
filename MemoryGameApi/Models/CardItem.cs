@@ -26,11 +26,9 @@ namespace MemoryGameApi.Models
         [MaxLength(30)]
         public string AccentColor { get; set; } = "#6366f1";
 
-        // Level 1 uses the first 6 pairs, Level 2 uses all 10 pairs
         [Range(1, 2, ErrorMessage = "Level must be 1 (6 pairs) or 2 (10 pairs)")]
         public int LevelDifficulty { get; set; } = 1;
 
         public bool IsActive { get; set; } = true;
     }
 }
-

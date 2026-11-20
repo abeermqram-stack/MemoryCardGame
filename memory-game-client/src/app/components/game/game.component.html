@@ -1,5 +1,4 @@
 <main class="container">
-  <!-- شريط ترحيب باللاعبة المسجلة (*ngIf) -->
   <div class="player-welcome-bar" *ngIf="loggedInPlayer">
     <span>
       مرحباً بكِ <strong>{{ loggedInPlayer.username }}</strong> — يمكنكِ متابعة جدول التقدم والإنجازات من صفحة حسابكِ.
@@ -7,7 +6,6 @@
     <a class="btn-outline-sm" [routerLink]="['/player']">عرض جدول التقدم</a>
   </div>
 
-  <!-- شريط المستوى والعدادات الثلاثة -->
   <section class="top-bar">
     <div class="level-buttons">
       <button
@@ -52,7 +50,6 @@
     </button>
   </section>
 
-  <!-- رسالة الفوز عند إيجاد جميع الأزواج (*ngIf) -->
   <div class="win-banner" *ngIf="isGameWon">
     <div>
       <strong>مبروك الفوز {{ loggedInPlayer ? ('يا ' + loggedInPlayer.username) : '' }}!</strong>
@@ -71,7 +68,6 @@
     </div>
   </div>
 
-  <!-- شبكة البطاقات (*ngFor + Property Binding + Event Binding + [ngClass]) -->
   <section
     class="cards-grid"
     [ngClass]="selectedLevel === 1 ? 'grid-6' : 'grid-10'">
@@ -96,4 +92,3 @@
     </div>
   </section>
 </main>
-

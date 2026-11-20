@@ -5,23 +5,19 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     });
 
-// Inject DbContext using Dependency Injection
 builder.Services.AddDbContext<MemoryGameDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MemoryGamePortal")));
 
-// Register Services and Interfaces in DI
 builder.Services.AddScoped<ICardService, CardService>();
 builder.Services.AddScoped<IGameSessionService, GameSessionService>();
 builder.Services.AddScoped<IPlayerService, PlayerService>();
 
-// Enable CORS for Angular
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular", policy =>
@@ -37,7 +33,6 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Ensure database and seed data are created automatically on any machine
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<MemoryGameDbContext>();

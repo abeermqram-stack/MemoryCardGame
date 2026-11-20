@@ -31,7 +31,6 @@ namespace MemoryGameApi.Controllers
             return Ok(player);
         }
 
-        // Simple Login using [FromQuery]
         [HttpGet("login")]
         public IActionResult Login([FromQuery] string email, [FromQuery] string password)
         {
@@ -42,14 +41,12 @@ namespace MemoryGameApi.Controllers
             return Ok(player);
         }
 
-        // Route Constraint :alpha
         [HttpGet("search/{keyword:alpha}")]
         public IActionResult SearchPlayers([FromRoute] string keyword)
         {
             return Ok(_playerService.SearchPlayersByName(keyword));
         }
 
-        // Add Operation
         [HttpPost]
         public IActionResult AddPlayer([FromBody] Player player)
         {
@@ -57,7 +54,6 @@ namespace MemoryGameApi.Controllers
             return Ok(created);
         }
 
-        // Update Operation
         [HttpPut("{id:int:min(1)}")]
         public IActionResult UpdatePlayer([FromRoute] int id, [FromBody] Player player)
         {
@@ -69,7 +65,6 @@ namespace MemoryGameApi.Controllers
             return Ok(player);
         }
 
-        // Delete Operation
         [HttpDelete("{id:int:min(1)}")]
         public IActionResult DeletePlayer([FromRoute] int id)
         {

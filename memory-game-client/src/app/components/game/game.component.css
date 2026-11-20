@@ -13,7 +13,6 @@
   font-size: 0.9rem;
 }
 
-/* شريط اللعبة العلوي */
 .top-bar {
   background-color: #ecd3c5;
   border: 2px solid #593426;
@@ -83,7 +82,6 @@
   background-color: #593426;
 }
 
-/* رسالة الفوز */
 .win-banner {
   background-color: #e6d7be;
   border: 2px solid #593426;
@@ -104,7 +102,6 @@
   color: #593426;
 }
 
-/* شبكة بطاقات الذاكرة */
 .cards-grid {
   display: grid;
   gap: 1rem;
@@ -199,4 +196,3 @@
     grid-template-columns: repeat(4, 1fr);
   }
 }
-

@@ -51,7 +51,6 @@ namespace MemoryGameApi.Services
             session.PlayedAt = DateTime.UtcNow;
             session.PairsCount = session.Level == 1 ? 6 : 10;
 
-            // Ensure player exists; if not, attach to Player 1 or create a new Player
             var player = _dbContext.Players
                 .Include(p => p.Profile)
                 .Include(p => p.PlayerAchievements)
@@ -69,12 +68,10 @@ namespace MemoryGameApi.Services
                 }
             }
 
-            // Prevent EF from trying to insert an existing nested Player object
             session.Player = null;
 
             _dbContext.GameSessions.Add(session);
 
-            // Update 1:1 PlayerProfile stats & N:M Achievements automatically
             if (player != null)
             {
                 if (player.Profile != null)
@@ -86,7 +83,6 @@ namespace MemoryGameApi.Services
                     }
                 }
 
-                // Auto-unlock Achievement 1: Win Level 1 in <= 10 attempts
                 if (session.Level == 1 && session.Attempts <= 10 &&
                     !player.PlayerAchievements.Any(pa => pa.AchievementId == 1))
                 {
@@ -99,7 +95,6 @@ namespace MemoryGameApi.Services
                     });
                 }
 
-                // Auto-unlock Achievement 2: Win in <= 35 seconds
                 if (session.TimeElapsedSeconds <= 35 &&
                     !player.PlayerAchievements.Any(pa => pa.AchievementId == 2))
                 {
@@ -112,7 +107,6 @@ namespace MemoryGameApi.Services
                     });
                 }
 
-                // Auto-unlock Achievement 3: Complete Level 2 (10 pairs)
                 if (session.Level == 2 && session.IsCompleted &&
                     !player.PlayerAchievements.Any(pa => pa.AchievementId == 3))
                 {
@@ -128,7 +122,6 @@ namespace MemoryGameApi.Services
 
             _dbContext.SaveChanges();
 
-            // Reload navigation property for response
             session.Player = player;
             return session;
         }
@@ -162,4 +155,3 @@ namespace MemoryGameApi.Services
         }
     }
 }
-

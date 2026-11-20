@@ -17,7 +17,6 @@ namespace MemoryGameApi.Services
 
         public List<CardItem> GetCardsByLevel(int level)
         {
-            // Level 1 requires 6 pairs, Level 2 requires 10 pairs
             int requiredPairs = level == 1 ? 6 : 10;
 
             var activeCards = _dbContext.CardItems
@@ -26,7 +25,6 @@ namespace MemoryGameApi.Services
                 .Take(requiredPairs)
                 .ToList();
 
-            // If fewer than requiredPairs exist with LevelDifficulty <= level, top up from all active cards
             if (activeCards.Count < requiredPairs)
             {
                 activeCards = _dbContext.CardItems
@@ -95,4 +93,3 @@ namespace MemoryGameApi.Services
         }
     }
 }
-

@@ -15,15 +15,12 @@ import { TimeFormatPipe } from '../../pipes/time-format.pipe';
   styleUrls: ['./game.component.css']
 })
 export class GameComponent implements OnInit, OnDestroy {
-  // المستوى الحالي: 1 (6 أزواج) أو 2 (10 أزواج)
   selectedLevel: number = 1;
 
-  // مصفوفة البطاقات في اللعبة
   boardCards: IBoardCard[] = [];
   flippedCards: IBoardCard[] = [];
   isBoardLocked: boolean = false;
 
-  // عدادات اللعبة: المحاولات، الوقت، النقاط
   attempts: number = 0;
   matchedPairsCount: number = 0;
   totalPairsCount: number = 6;
@@ -51,7 +48,6 @@ export class GameComponent implements OnInit, OnDestroy {
     this.stopTimer();
   }
 
-  // طريقة اللعب (6 أزواج للمستوى الأول، 10 أزواج للمستوى الثاني)
   startNewGame(level: number): void {
     this.selectedLevel = level;
     this.totalPairsCount = level === 1 ? 6 : 10;
@@ -133,7 +129,6 @@ export class GameComponent implements OnInit, OnDestroy {
     };
 
     this.apiService.addSession(newSession).subscribe(() => {
-      // تحديث بيانات اللاعبة المسجلة (الملف الشخصي 1:1 والإنجازات N:M) بعد الفوز
       if (currentPlayer) {
         this.apiService.getPlayerById(currentPlayer.playerId).subscribe(updated => {
           this.authState.setPlayer(updated);
@@ -161,4 +156,3 @@ export class GameComponent implements OnInit, OnDestroy {
     }
   }
 }
-

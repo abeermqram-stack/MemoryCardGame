@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
 
 namespace MemoryGameApi.Models
 {
@@ -10,7 +9,6 @@ namespace MemoryGameApi.Models
         [Key]
         public int SessionId { get; set; }
 
-        // Level 1: 6 Pairs (12 cards), Level 2: 10 Pairs (20 cards)
         [Required]
         [Range(1, 2, ErrorMessage = "Level must be 1 or 2")]
         public int Level { get; set; } = 1;
@@ -35,12 +33,9 @@ namespace MemoryGameApi.Models
 
         public DateTime PlayedAt { get; set; } = DateTime.UtcNow;
 
-        // Foreign Key for One-to-Many relationship with Player
         [Required]
         public int PlayerId { get; set; }
 
-        // Reference Navigation Property
         public Player? Player { get; set; }
     }
 }
-

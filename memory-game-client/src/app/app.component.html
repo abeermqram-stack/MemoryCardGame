@@ -1,5 +1,4 @@
 <div class="page-wrapper">
-  <!-- الشريط العلوي مع Angular Routing (RouterLink + RouterLinkActive) -->
   <header class="header-bar">
     <div class="header-container">
       <a class="site-title" [routerLink]="['/game']">{{ appTitle }}</a>
@@ -29,6 +28,5 @@
     </div>
   </header>
 
-  <!-- عرض الصفحة النشطة ديناميكياً عبر RouterOutlet -->
   <router-outlet></router-outlet>
 </div>

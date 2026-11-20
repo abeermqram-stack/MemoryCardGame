@@ -1,5 +1,4 @@
 <main class="container">
-  <!-- قبل تسجيل الدخول: خياران (تسجيل دخول أو إنشاء حساب جديد) -->
   <section class="card-box auth-card-box" *ngIf="!loggedInPlayer">
     <div class="choice-tabs">
       <button
@@ -18,7 +17,6 @@
       </button>
     </div>
 
-    <!-- الخيار الأول: تسجيل دخول (Two-Way Binding + Property Binding + Event Binding) -->
     <form class="vertical-form" *ngIf="playerAuthMode === 'login'" (ngSubmit)="loginAsPlayer()">
       <div class="form-field">
         <label>البريد الإلكتروني</label>
@@ -46,7 +44,6 @@
       </button>
     </form>
 
-    <!-- الخيار الثاني: إنشاء حساب جديد -->
     <form class="vertical-form" *ngIf="playerAuthMode === 'register'" (ngSubmit)="registerNewPlayer()">
       <div class="form-field">
         <label>الاسم</label>
@@ -86,9 +83,7 @@
     <p class="error-text" *ngIf="playerAuthMessage">{{ playerAuthMessage }}</p>
   </section>
 
-  <!-- بعد تسجيل الدخول أو إنشاء الحساب -->
   <div *ngIf="loggedInPlayer">
-    <!-- معلومات اللاعبة وملفها الشخصي (علاقة 1:1 PlayerProfile) -->
     <section class="card-box">
       <div class="box-header">
         <div>
@@ -122,7 +117,6 @@
       </div>
     </section>
 
-    <!-- أوسمة وإنجازات اللاعبة (علاقة N:M PlayerAchievements) -->
     <section
       class="card-box"
       *ngIf="loggedInPlayer.playerAchievements && loggedInPlayer.playerAchievements.length > 0">
@@ -141,7 +135,6 @@
       </div>
     </section>
 
-    <!-- جدول اللاعبين ومستوى تقدمهم (علاقة 1:N GameSessions) -->
     <section class="card-box">
       <h2>جدول اللاعبين ومستوى تقدمهم</h2>
       <table class="simple-table">
@@ -169,4 +162,3 @@
     </section>
   </div>
 </main>
-

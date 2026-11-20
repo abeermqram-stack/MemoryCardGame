@@ -4,11 +4,9 @@ using System.Text.Json.Serialization;
 
 namespace MemoryGameApi.Models
 {
-    // Linking Table for Many-to-Many Relationship between Player and Achievement
     [Table("PlayerAchievements")]
     public class PlayerAchievement
     {
-        // Composite Primary Key (PlayerId + AchievementId) configured via Fluent API
         public int PlayerId { get; set; }
 
         [JsonIgnore]
@@ -18,11 +16,9 @@ namespace MemoryGameApi.Models
 
         public Achievement? Achievement { get; set; }
 
-        // Extra payload properties in the Linking Table (like 'Order' in BookAuthor lecture example)
         public DateTime UnlockedAt { get; set; } = DateTime.UtcNow;
 
         [Range(1, 100)]
         public int DisplayOrder { get; set; } = 1;
     }
 }
-

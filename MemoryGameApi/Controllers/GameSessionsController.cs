@@ -21,7 +21,6 @@ namespace MemoryGameApi.Controllers
             return Ok(_sessionService.GetAllSessions());
         }
 
-        // [FromQuery] Parameter Binding
         [HttpGet("paged")]
         public IActionResult GetPagedSessions(
             [FromQuery] int pageIndex = 1,
@@ -44,7 +43,6 @@ namespace MemoryGameApi.Controllers
             return Ok(session);
         }
 
-        // Add Operation
         [HttpPost]
         public IActionResult AddSession([FromBody] GameSession session)
         {
@@ -52,7 +50,6 @@ namespace MemoryGameApi.Controllers
             return Ok(created);
         }
 
-        // Update Operation
         [HttpPut("{id:int:min(1)}")]
         public IActionResult UpdateSession([FromRoute] int id, [FromBody] GameSession session)
         {
@@ -64,7 +61,6 @@ namespace MemoryGameApi.Controllers
             return Ok(session);
         }
 
-        // Delete Operation
         [HttpDelete("{id:int:min(1)}")]
         public IActionResult DeleteSession([FromRoute] int id)
         {

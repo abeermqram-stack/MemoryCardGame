@@ -1,5 +1,4 @@
 :root {
-  /* لوحة الألوان الدافئة والأنيقة (Warm Coffee, Caramel & Cream Palette) */
   --espresso-dark: #2e1e17;
   --mocha-brown: #593426;
   --cinnamon-roast: #8c583a;
@@ -37,14 +36,12 @@ button:disabled {
   cursor: not-allowed;
 }
 
-/* الحاوية الرئيسية */
 .container {
   max-width: 960px;
   margin: 0 auto;
   padding: 1.5rem 1.25rem;
 }
 
-/* صناديق وجداول الصفحات المشتركة */
 .card-box {
   background-color: #ecd3c5;
   border: 2px solid #593426;

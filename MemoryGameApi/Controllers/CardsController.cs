@@ -21,14 +21,12 @@ namespace MemoryGameApi.Controllers
             return Ok(_cardService.GetAllCards());
         }
 
-        // Route Constraint :int:range(1,2) and [FromRoute]
         [HttpGet("level/{level:int:range(1,2)}")]
         public IActionResult GetCardsByLevel([FromRoute] int level)
         {
             return Ok(_cardService.GetCardsByLevel(level));
         }
 
-        // GET: api/Cards/search?keyword=... (Query parameter binding [FromQuery])
         [HttpGet("search")]
         public IActionResult SearchCards([FromQuery] string keyword)
         {
@@ -39,7 +37,6 @@ namespace MemoryGameApi.Controllers
             return Ok(results);
         }
 
-        // Route Constraint :int:min(1) and [FromRoute]
         [HttpGet("{id:int:min(1)}")]
         public IActionResult GetCardById([FromRoute] int id)
         {
@@ -50,7 +47,6 @@ namespace MemoryGameApi.Controllers
             return Ok(card);
         }
 
-        // Add Operation
         [HttpPost]
         public IActionResult AddCard([FromBody] CardItem card)
         {
@@ -58,7 +54,6 @@ namespace MemoryGameApi.Controllers
             return Ok(created);
         }
 
-        // Update Operation
         [HttpPut("{id:int:min(1)}")]
         public IActionResult UpdateCard([FromRoute] int id, [FromBody] CardItem card)
         {
@@ -70,8 +65,6 @@ namespace MemoryGameApi.Controllers
             return Ok(card);
         }
 
-        // Specialized Update Endpoint: [FromRoute] + [FromBody] DTO
-        // PUT: api/Cards/1/update-title
         [HttpPut("{id:int:min(1)}/update-title")]
         public IActionResult UpdateCardTitle([FromRoute] int id, [FromBody] UpdateCardTitleDto dto)
         {
@@ -91,7 +84,6 @@ namespace MemoryGameApi.Controllers
             });
         }
 
-        // Delete Operation
         [HttpDelete("{id:int:min(1)}")]
         public IActionResult DeleteCard([FromRoute] int id)
         {

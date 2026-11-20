@@ -29,13 +29,10 @@ namespace MemoryGameApi.Models
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        // 1. One-to-One Relationship: One Player has One PlayerProfile
         public PlayerProfile? Profile { get; set; }
 
-        // 2. One-to-Many Relationship: One Player has Many GameSessions
         public ICollection<GameSession> GameSessions { get; set; } = new List<GameSession>();
 
-        // 3. Many-to-Many Relationship (via Linking Table PlayerAchievement)
         public ICollection<PlayerAchievement> PlayerAchievements { get; set; } = new List<PlayerAchievement>();
     }
 }

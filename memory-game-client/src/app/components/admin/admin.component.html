@@ -1,5 +1,4 @@
 <main class="container">
-  <!-- شاشة تسجيل دخول المشرف -->
   <section class="card-box auth-card-box" *ngIf="!loggedInAdmin">
     <h2>تسجيل دخول المشرف (Admin)</h2>
     <p class="sub-note">هذه الصفحة مخصصة للمشرف فقط لإضافة وتعديل وحذف البطاقات والنتائج.</p>
@@ -33,16 +32,13 @@
     <p class="error-text" *ngIf="adminLoginError">{{ adminLoginError }}</p>
   </section>
 
-  <!-- لوحة تحكم المشرف -->
   <div *ngIf="loggedInAdmin">
-    <!-- إدارة البطاقات: إضافة + تعديل + حذف + بحث -->
     <section class="card-box">
       <div class="box-header">
         <h2>لوحة المشرف: إدارة البطاقات ({{ loggedInAdmin.username }})</h2>
         <button type="button" class="btn-outline" (click)="logoutAdmin()">خروج المشرف</button>
       </div>
 
-      <!-- نموذج الإضافة والتعديل (Two-Way + Property + Event Binding) -->
       <form class="inline-form" (ngSubmit)="saveCard()">
         <input
           type="text"
@@ -76,7 +72,6 @@
         </button>
       </form>
 
-      <!-- شريط البحث عن البطاقات عبر API ([FromQuery]) -->
       <form class="inline-form search-bar" (ngSubmit)="searchCards()">
         <input
           type="text"
@@ -118,7 +113,6 @@
       </table>
     </section>
 
-    <!-- إدارة وحذف نتائج اللاعبات (للأدمن فقط) -->
     <section class="card-box">
       <h2>إدارة وحذف نتائج اللاعبات</h2>
       <table class="simple-table">
@@ -150,4 +144,3 @@
     </section>
   </div>
 </main>
-

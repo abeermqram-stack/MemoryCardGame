@@ -1,6 +1,5 @@
 import { Observable } from 'rxjs';
 
-// 1. Interfaces لتعريف بنية البيانات (Data Structures)
 export interface ICardItem {
   cardId: number;
   title: string;
@@ -72,7 +71,6 @@ export interface IGameSession {
   player?: IPlayer;
 }
 
-// 2. Interfaces لتعريف تواقيع الدوال (Function Signatures / Head for Functions)
 export interface IGameEngineService {
   buildBoardDeck(cards: ICardItem[], level: number): IBoardCard[];
   areCardsMatching(firstCard: IBoardCard, secondCard: IBoardCard): boolean;

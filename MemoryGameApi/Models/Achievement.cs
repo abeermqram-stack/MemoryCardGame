@@ -25,9 +25,7 @@ namespace MemoryGameApi.Models
         [Range(10, 5000)]
         public int BonusPoints { get; set; } = 100;
 
-        // Many-to-Many Relationship (via Linking Table PlayerAchievement)
         [JsonIgnore]
         public ICollection<PlayerAchievement> PlayerAchievements { get; set; } = new List<PlayerAchievement>();
     }
 }
-

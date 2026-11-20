@@ -6,12 +6,6 @@ import { IBoardCard, ICardItem, IGameEngineService } from '../models/game.interf
 })
 export class MemoryGameService implements IGameEngineService {
 
-  /**
-   * يأخذ البطاقات القادمة من الـ API ويكرر كل بطاقة مرتين لتكوين أزواج
-   * المستوى الأول: 6 أزواج (12 بطاقة)
-   * المستوى الثاني: 10 أزواج (20 بطاقة)
-   * ثم يخلطها عشوائياً بخوارزمية Fisher-Yates
-   */
   buildBoardDeck(cards: ICardItem[], level: number): IBoardCard[] {
     const requiredPairs = level === 1 ? 6 : 10;
     const selectedCards = cards.slice(0, requiredPairs);
@@ -20,7 +14,6 @@ export class MemoryGameService implements IGameEngineService {
     let uniqueIdCounter = 1;
 
     for (const item of selectedCards) {
-      // البطاقة الأولى من الزوج
       pairedDeck.push({
         uniqueBoardId: uniqueIdCounter++,
         cardId: item.cardId,
@@ -32,7 +25,6 @@ export class MemoryGameService implements IGameEngineService {
         isMatched: false
       });
 
-      // البطاقة الثانية المطابقة من الزوج
       pairedDeck.push({
         uniqueBoardId: uniqueIdCounter++,
         cardId: item.cardId,
@@ -45,7 +37,6 @@ export class MemoryGameService implements IGameEngineService {
       });
     }
 
-    // خلط البطاقات عشوائياً (Shuffle)
     for (let i = pairedDeck.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [pairedDeck[i], pairedDeck[j]] = [pairedDeck[j], pairedDeck[i]];
@@ -54,9 +45,6 @@ export class MemoryGameService implements IGameEngineService {
     return pairedDeck;
   }
 
-  /**
-   * التحقق من تطابق بطاقتين
-   */
   areCardsMatching(firstCard: IBoardCard, secondCard: IBoardCard): boolean {
     return (
       firstCard.uniqueBoardId !== secondCard.uniqueBoardId &&
@@ -64,9 +52,6 @@ export class MemoryGameService implements IGameEngineService {
     );
   }
 
-  /**
-   * حساب النقاط بناءً على المستوى، عدد المحاولات، والوقت المستغرق بالثواني
-   */
   calculateScore(level: number, attempts: number, timeElapsedSeconds: number): number {
     const basePoints = level === 1 ? 1000 : 1800;
     const minOptimalAttempts = level === 1 ? 6 : 10;
@@ -78,4 +63,3 @@ export class MemoryGameService implements IGameEngineService {
     return Math.max(150, basePoints - attemptPenalty - timePenalty);
   }
 }
-

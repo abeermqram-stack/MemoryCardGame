@@ -24,13 +24,10 @@ namespace MemoryGameApi.Models
         [Range(0, 10000)]
         public int TotalGamesPlayed { get; set; } = 0;
 
-        // Foreign Key for One-to-One relationship with Player
         [ForeignKey(nameof(Player))]
         public int PlayerId { get; set; }
 
-        // Reference Navigation Property
         [JsonIgnore]
         public Player? Player { get; set; }
     }
 }
-
