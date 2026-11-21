@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Swagger UI — MemoryGameApi</title>
+  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5.17.14/swagger-ui.css" />
+  <style>
+    html { box-sizing: border-box; overflow: -moz-scrollbars-vertical; overflow-y: scroll; }
+    *, *:before, *:after { box-sizing: inherit; }
+    body { margin: 0; background: #fafafa; }
+  </style>
+</head>
+<body>
+  <div id="swagger-ui"></div>
+
+  <script>
+    (function () {
+      const STORAGE_KEY = 'memory_card_game_hosted_db_v2';
+      let memoryDb = null;
+
+      function createSeedDb() {
+        const seedDate = '2026-11-01T12:00:00Z';
+        return {
+          cards: [
+            { cardId: 1, title: 'صاروخ الفضاء', icon: '🚀', category: 'الفضاء', accentColor: '#6366f1', levelDifficulty: 1, isActive: true },
+            { cardId: 2, title: 'كوكب زحل', icon: '🪐', category: 'الفضاء', accentColor: '#8b5cf6', levelDifficulty: 1, isActive: true },
+            { cardId: 3, title: 'الجوهرة الماسية', icon: '💎', category: 'كنوز', accentColor: '#06b6d4', levelDifficulty: 1, isActive: true },
+            { cardId: 4, title: 'التاج الملكي', icon: '👑', category: 'كنوز', accentColor: '#f59e0b', levelDifficulty: 1, isActive: true },
+            { cardId: 5, title: 'الصاعقة الذهبية', icon: '⚡', category: 'طاقة', accentColor: '#eab308', levelDifficulty: 1, isActive: true },
+            { cardId: 6, title: 'النجمة المضيئة', icon: '🌟', category: 'الفضاء', accentColor: '#ec4899', levelDifficulty: 1, isActive: true },
+            { cardId: 7, title: 'التنين الناري', icon: '🐉', category: 'أساطير', accentColor: '#ef4444', levelDifficulty: 2, isActive: true },
+            { cardId: 8, title: 'الكريستال السحري', icon: '🔮', category: 'أساطير', accentColor: '#a855f7', levelDifficulty: 2, isActive: true },
+            { cardId: 9, title: 'درع الفرسان', icon: '🛡️', category: 'مغامرة', accentColor: '#10b981', levelDifficulty: 2, isActive: true },
+            { cardId: 10, title: 'المفتاح الذهبي', icon: '🗝️', category: 'كنوز', accentColor: '#f97316', levelDifficulty: 2, isActive: true }
+          ],
+          players: [
+            { playerId: 1, username: 'عبير مقرم', email: 'abeer@gmail.com', password: '1234', role: 'Admin', createdAt: seedDate },
+            { playerId: 2, username: 'آسيا سعيد بن عبيد', email: 'asia@memorygame.sa', password: '123456', role: 'Player', createdAt: seedDate },
+            { playerId: 3, username: 'فاطمة عصام باطويل', email: 'fatima@memorygame.sa', password: '123456', role: 'Player', createdAt: seedDate },
+            { playerId: 4, username: 'حنين عبدالعزيز باوزير', email: 'haneen@memorygame.sa', password: '123456', role: 'Player', createdAt: seedDate },
+            { playerId: 5, username: 'سارة عوض بن جوبح', email: 'sara@memorygame.sa', password: '123456', role: 'Player', createdAt: seedDate },
+            { playerId: 6, username: 'فاطمة بازياد', email: 'fatimab@memorygame.sa', password: '123456', role: 'Player', createdAt: seedDate }
+          ],
+          profiles: [
+            { profileId: 1, playerId: 1, avatarEmoji: '👩‍💻', preferredTheme: 'Cosmic Indigo', highestScore: 980, totalGamesPlayed: 5 },
+            { profileId: 2, playerId: 2, avatarEmoji: '🌟', preferredTheme: 'Emerald Glow', highestScore: 1420, totalGamesPlayed: 8 },
+            { profileId: 3, playerId: 3, avatarEmoji: '🌸', preferredTheme: 'Royal Gold', highestScore: 1150, totalGamesPlayed: 6 },
+            { profileId: 4, playerId: 4, avatarEmoji: '🦋', preferredTheme: 'Soft Rose', highestScore: 1040, totalGamesPlayed: 4 },
+            { profileId: 5, playerId: 5, avatarEmoji: '💎', preferredTheme: 'Ocean Pearl', highestScore: 930, totalGamesPlayed: 5 },
+            { profileId: 6, playerId: 6, avatarEmoji: '🌙', preferredTheme: 'Warm Mocha', highestScore: 890, totalGamesPlayed: 3 }
+          ],
+          achievements: [
+            { achievementId: 1, title: 'ذاكرة فولاذية', description: 'الفوز في المستوى الأول بأقل من 10 محاولات', badgeIcon: '🧠', bonusPoints: 150 },
+            { achievementId: 2, title: 'سريع كالبرق', description: 'إنهاء اللعبة في أقل من 35 ثانية', badgeIcon: '⚡', bonusPoints: 200 },
+            { achievementId: 3, title: 'أسطورة المستوى الثاني', description: 'إتمام المستوى الثاني (10 أزواج) بنجاح', badgeIcon: '🏆', bonusPoints: 300 }
+          ],
+          playerAchievements: [
+            { playerId: 1, achievementId: 1, unlockedAt: seedDate, displayOrder: 1 },
+            { playerId: 2, achievementId: 2, unlockedAt: seedDate, displayOrder: 1 },
+            { playerId: 2, achievementId: 3, unlockedAt: seedDate, displayOrder: 2 },
+            { playerId: 3, achievementId: 1, unlockedAt: seedDate, displayOrder: 1 },
+            { playerId: 3, achievementId: 2, unlockedAt: seedDate, displayOrder: 2 },
+            { playerId: 4, achievementId: 1, unlockedAt: seedDate, displayOrder: 1 },
+            { playerId: 5, achievementId: 2, unlockedAt: seedDate, displayOrder: 1 },
+            { playerId: 6, achievementId: 1, unlockedAt: seedDate, displayOrder: 1 }
+          ],
+          sessions: [
+            { sessionId: 1, playerId: 2, level: 2, pairsCount: 10, attempts: 14, timeElapsedSeconds: 42, score: 1420, isCompleted: true, playedAt: seedDate },
+            { sessionId: 2, playerId: 3, level: 2, pairsCount: 10, attempts: 16, timeElapsedSeconds: 48, score: 1150, isCompleted: true, playedAt: seedDate },
+            { sessionId: 3, playerId: 4, level: 1, pairsCount: 6, attempts: 7, timeElapsedSeconds: 24, score: 1040, isCompleted: true, playedAt: seedDate },
+            { sessionId: 4, playerId: 1, level: 1, pairsCount: 6, attempts: 8, timeElapsedSeconds: 26, score: 980, isCompleted: true, playedAt: seedDate },
+            { sessionId: 5, playerId: 5, level: 1, pairsCount: 6, attempts: 9, timeElapsedSeconds: 30, score: 930, isCompleted: true, playedAt: seedDate },
+            { sessionId: 6, playerId: 6, level: 1, pairsCount: 6, attempts: 10, timeElapsedSeconds: 33, score: 890, isCompleted: true, playedAt: seedDate }
+          ]
+        };
+      }
+
+      function loadDb() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (raw) {
+            memoryDb = JSON.parse(raw);
+            return memoryDb;
+          }
+        } catch {}
+        if (!memoryDb) {
+          memoryDb = createSeedDb();
+          saveDb(memoryDb);
+        }
+        return memoryDb;
+      }
+
+      function saveDb(db) {
+        memoryDb = db;
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); } catch {}
+      }
+
+      function hydratePlayer(db, player) {
+        const profile = db.profiles.find(pr => pr.playerId === player.playerId) || null;
+        const gameSessions = db.sessions.filter(s => s.playerId === player.playerId);
+        const playerAchievements = db.playerAchievements
+          .filter(pa => pa.playerId === player.playerId)
+          .sort((a, b) => a.displayOrder - b.displayOrder)
+          .map(pa => ({
+            ...pa,
+            achievement: db.achievements.find(a => a.achievementId === pa.achievementId) || null
+          }));
+        return { ...player, profile, gameSessions, playerAchievements };
+      }
+
+      function hydrateSessions(db) {
+        return db.sessions
+          .map(s => {
+            const p = db.players.find(pl => pl.playerId === s.playerId);
+            const pr = p ? db.profiles.find(x => x.playerId === p.playerId) : null;
+            return { ...s, player: p ? { ...p, profile: pr } : null };
+          })
+          .sort((a, b) => b.score - a.score || a.timeElapsedSeconds - b.timeElapsedSeconds);
+      }
+
+      function jsonResponse(data, status = 200) {
+        return new Response(typeof data === 'string' ? data : JSON.stringify(data, null, 2), {
+          status,
+          headers: { 'Content-Type': typeof data === 'string' ? 'text/plain; charset=utf-8' : 'application/json; charset=utf-8' }
+        });
+      }
+
+      const originalFetch = window.fetch.bind(window);
+      window.fetch = async function (input, init) {
+        const urlStr = typeof input === 'string' ? input : input.url;
+        const url = new URL(urlStr, window.location.origin);
+        const apiIdx = url.pathname.indexOf('/api/');
+        if (apiIdx === -1) {
+          return originalFetch(input, init);
+        }
+
+        const path = url.pathname.slice(apiIdx);
+        const method = ((init && init.method) || (typeof input !== 'string' && input.method) || 'GET').toUpperCase();
+        let body = null;
+        if (init && init.body) {
+          try { body = JSON.parse(init.body); } catch { body = null; }
+        }
+
+        const db = loadDb();
+
+        // --- Cards ---
+        if (path === '/api/Cards' && method === 'GET') {
+          return jsonResponse([...db.cards].sort((a, b) => a.cardId - b.cardId));
+        }
+        if (path === '/api/Cards' && method === 'POST') {
+          const nextId = db.cards.reduce((m, c) => Math.max(m, c.cardId), 0) + 1;
+          const created = {
+            cardId: nextId,
+            title: body?.title || 'بطاقة جديدة',
+            icon: body?.icon || '🌟',
+            category: body?.category || 'عام',
+            accentColor: body?.accentColor || '#6366f1',
+            levelDifficulty: Number(body?.levelDifficulty) || 1,
+            isActive: body?.isActive !== false
+          };
+          db.cards.push(created);
+          saveDb(db);
+          return jsonResponse(created);
+        }
+        let m;
+        if ((m = path.match(/^\/api\/Cards\/level\/(\d+)$/)) && method === 'GET') {
+          const level = Number(m[1]);
+          if (level < 1 || level > 2) return jsonResponse('Level must be 1 or 2', 400);
+          const req = level === 1 ? 6 : 10;
+          let active = db.cards.filter(c => c.isActive && c.levelDifficulty <= level).sort((a, b) => a.cardId - b.cardId).slice(0, req);
+          if (active.length < req) active = db.cards.filter(c => c.isActive).sort((a, b) => a.cardId - b.cardId).slice(0, req);
+          return jsonResponse(active);
+        }
+        if (path === '/api/Cards/search' && method === 'GET') {
+          const kw = (url.searchParams.get('keyword') || '').trim().toLowerCase();
+          if (!kw) return jsonResponse('Search keyword cannot be empty.', 400);
+          return jsonResponse(db.cards.filter(c => c.title.toLowerCase().includes(kw) || c.category.toLowerCase().includes(kw)));
+        }
+        if ((m = path.match(/^\/api\/Cards\/(\d+)\/update-title$/)) && method === 'PUT') {
+          const id = Number(m[1]);
+          const title = (body?.title || '').trim();
+          if (!title) return jsonResponse('New title cannot be empty.', 400);
+          const card = db.cards.find(c => c.cardId === id);
+          if (!card) return jsonResponse(`Card with ID ${id} was not found.`, 404);
+          card.title = title;
+          saveDb(db);
+          return jsonResponse({ message: 'Card title updated successfully.', cardId: id, updatedTitle: title });
+        }
+        if ((m = path.match(/^\/api\/Cards\/(\d+)$/))) {
+          const id = Number(m[1]);
+          const idx = db.cards.findIndex(c => c.cardId === id);
+          if (method === 'GET') {
+            return idx === -1 ? jsonResponse('No Card was found', 404) : jsonResponse(db.cards[idx]);
+          }
+          if (method === 'PUT') {
+            if (idx === -1) return jsonResponse('No Card was found', 404);
+            db.cards[idx] = { ...db.cards[idx], ...body, cardId: id };
+            saveDb(db);
+            return jsonResponse(db.cards[idx]);
+          }
+          if (method === 'DELETE') {
+            if (idx === -1) return jsonResponse('No Card was found', 404);
+            db.cards.splice(idx, 1);
+            saveDb(db);
+            return jsonResponse({ message: 'Card Deleted Successfully' });
+          }
+        }
+
+        // --- GameSessions ---
+        if (path === '/api/GameSessions' && method === 'GET') {
+          return jsonResponse(hydrateSessions(db));
+        }
+        if (path === '/api/GameSessions/paged' && method === 'GET') {
+          const pageIndex = Number(url.searchParams.get('pageIndex') || '1');
+          const pageSize = Number(url.searchParams.get('pageSize') || '10');
+          const levelParam = url.searchParams.get('level');
+          if (pageIndex < 1 || pageSize < 1) return jsonResponse('PageIndex and PageSize must be greater than 0.', 400);
+          let list = hydrateSessions(db);
+          if (levelParam) list = list.filter(s => s.level === Number(levelParam));
+          return jsonResponse(list.slice((pageIndex - 1) * pageSize, pageIndex * pageSize));
+        }
+        if (path === '/api/GameSessions' && method === 'POST') {
+          const nextId = db.sessions.reduce((mx, s) => Math.max(mx, s.sessionId || 0), 0) + 1;
+          const level = Number(body?.level) || 1;
+          const player = db.players.find(p => p.playerId === Number(body?.playerId)) || db.players[0];
+          const created = {
+            sessionId: nextId,
+            level,
+            pairsCount: level === 1 ? 6 : 10,
+            attempts: Number(body?.attempts) || 6,
+            timeElapsedSeconds: Number(body?.timeElapsedSeconds) || 20,
+            score: Number(body?.score) || 900,
+            isCompleted: body?.isCompleted !== false,
+            playedAt: new Date().toISOString(),
+            playerId: player ? player.playerId : 1
+          };
+          db.sessions.push(created);
+          if (player) {
+            const pr = db.profiles.find(x => x.playerId === player.playerId);
+            if (pr) {
+              pr.totalGamesPlayed += 1;
+              if (created.score > pr.highestScore) pr.highestScore = created.score;
+            }
+          }
+          saveDb(db);
+          return jsonResponse({ ...created, player: player ? hydratePlayer(db, player) : null });
+        }
+        if ((m = path.match(/^\/api\/GameSessions\/(\d+)$/))) {
+          const id = Number(m[1]);
+          const idx = db.sessions.findIndex(s => s.sessionId === id);
+          if (method === 'GET') {
+            if (idx === -1) return jsonResponse('No Session was found', 404);
+            const s = db.sessions[idx];
+            const p = db.players.find(x => x.playerId === s.playerId) || null;
+            return jsonResponse({ ...s, player: p });
+          }
+          if (method === 'PUT') {
+            if (idx === -1) return jsonResponse('No Session was found', 404);
+            db.sessions[idx] = { ...db.sessions[idx], ...body, sessionId: id };
+            saveDb(db);
+            return jsonResponse(db.sessions[idx]);
+          }
+          if (method === 'DELETE') {
+            if (idx === -1) return jsonResponse('No Session was found', 404);
+            db.sessions.splice(idx, 1);
+            saveDb(db);
+            return jsonResponse({ message: 'Session Deleted Successfully' });
+          }
+        }
+
+        // --- Players ---
+        if (path === '/api/Players' && method === 'GET') {
+          return jsonResponse(db.players.map(p => hydratePlayer(db, p)));
+        }
+        if (path === '/api/Players/login' && method === 'GET') {
+          const email = (url.searchParams.get('email') || '').trim().toLowerCase();
+          const password = url.searchParams.get('password') || '';
+          const p = db.players.find(x => x.email.toLowerCase() === email && x.password === password);
+          return p ? jsonResponse(hydratePlayer(db, p)) : jsonResponse('Invalid email or password', 404);
+        }
+        if ((m = path.match(/^\/api\/Players\/search\/(.+)$/)) && method === 'GET') {
+          const kw = decodeURIComponent(m[1]).toLowerCase();
+          const matched = db.players
+            .filter(p => p.username.toLowerCase().includes(kw) || p.email.toLowerCase().includes(kw))
+            .map(p => hydratePlayer(db, p));
+          return jsonResponse(matched);
+        }
+        if (path === '/api/Players' && method === 'POST') {
+          const nextPId = db.players.reduce((mx, p) => Math.max(mx, p.playerId), 0) + 1;
+          const nextPrId = db.profiles.reduce((mx, pr) => Math.max(mx, pr.profileId), 0) + 1;
+          const created = {
+            playerId: nextPId,
+            username: body?.username || 'لاعبة جديدة',
+            email: body?.email || `player${nextPId}@memorygame.sa`,
+            password: body?.password || '123456',
+            role: body?.role || 'Player',
+            createdAt: new Date().toISOString()
+          };
+          const profile = {
+            profileId: nextPrId,
+            playerId: nextPId,
+            avatarEmoji: body?.profile?.avatarEmoji || '👤',
+            preferredTheme: body?.profile?.preferredTheme || 'Default',
+            highestScore: 0,
+            totalGamesPlayed: 0
+          };
+          db.players.push(created);
+          db.profiles.push(profile);
+          saveDb(db);
+          return jsonResponse(hydratePlayer(db, created));
+        }
+        if ((m = path.match(/^\/api\/Players\/(\d+)$/))) {
+          const id = Number(m[1]);
+          const idx = db.players.findIndex(p => p.playerId === id);
+          if (method === 'GET') {
+            return idx === -1 ? jsonResponse('No Player was found', 404) : jsonResponse(hydratePlayer(db, db.players[idx]));
+          }
+          if (method === 'PUT') {
+            if (idx === -1) return jsonResponse('No Player was found', 404);
+            db.players[idx] = { ...db.players[idx], ...body, playerId: id };
+            saveDb(db);
+            return jsonResponse(hydratePlayer(db, db.players[idx]));
+          }
+          if (method === 'DELETE') {
+            if (idx === -1) return jsonResponse('No Player was found', 404);
+            db.players.splice(idx, 1);
+            saveDb(db);
+            return jsonResponse({ message: 'Player Deleted Successfully' });
+          }
+        }
+
+        return jsonResponse('Endpoint not found', 404);
+      };
+    })();
+  </script>
+  <script src="https://unpkg.com/swagger-ui-dist@5.17.14/swagger-ui-bundle.js"></script>
+  <script src="https://unpkg.com/swagger-ui-dist@5.17.14/swagger-ui-standalone-preset.js"></script>
+  <script>
+    window.onload = function () {
+      window.ui = SwaggerUIBundle({
+        url: '/MemoryCardGame/swagger/swagger.json',
+        dom_id: '#swagger-ui',
+        deepLinking: true,
+        presets: [
+          SwaggerUIBundle.presets.apis,
+          SwaggerUIStandalonePreset
+        ],
+        layout: 'StandaloneLayout'
+      });
+    };
+  </script>
+</body>
+</html>
