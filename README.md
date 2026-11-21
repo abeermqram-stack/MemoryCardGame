@@ -81,17 +81,4 @@
 * **Pipes:** Custom Pipe (`timeFormat`) بالإضافة إلى `number` و `uppercase` و `date`.
 * **Directives:** `*ngFor` و `*ngIf` و `[ngClass]`.
 
----
 
-## طريقة التشغيل
-1. **تشغيل الـ Backend (Swagger متاح على `http://localhost:5150/swagger`):**
-   ```powershell
-   cd MemoryGameApi
-   dotnet run
-   ```
-2. **تشغيل الـ Frontend (على `http://localhost:4200`):**
-   ```powershell
-   cd memory-game-client
-   npm install
-   npm start
-   ```
