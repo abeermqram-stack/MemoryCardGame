@@ -275,6 +275,30 @@ namespace MemoryGameApi.Migrations
                         new
                         {
                             SessionId = 2,
+                            Attempts = 16,
+                            IsCompleted = true,
+                            Level = 2,
+                            PairsCount = 10,
+                            PlayedAt = new DateTime(2026, 11, 1, 12, 0, 0, 0, DateTimeKind.Utc),
+                            PlayerId = 3,
+                            Score = 1150,
+                            TimeElapsedSeconds = 48
+                        },
+                        new
+                        {
+                            SessionId = 3,
+                            Attempts = 7,
+                            IsCompleted = true,
+                            Level = 1,
+                            PairsCount = 6,
+                            PlayedAt = new DateTime(2026, 11, 1, 12, 0, 0, 0, DateTimeKind.Utc),
+                            PlayerId = 4,
+                            Score = 1040,
+                            TimeElapsedSeconds = 24
+                        },
+                        new
+                        {
+                            SessionId = 4,
                             Attempts = 8,
                             IsCompleted = true,
                             Level = 1,
@@ -286,13 +310,25 @@ namespace MemoryGameApi.Migrations
                         },
                         new
                         {
-                            SessionId = 3,
+                            SessionId = 5,
+                            Attempts = 9,
+                            IsCompleted = true,
+                            Level = 1,
+                            PairsCount = 6,
+                            PlayedAt = new DateTime(2026, 11, 1, 12, 0, 0, 0, DateTimeKind.Utc),
+                            PlayerId = 5,
+                            Score = 930,
+                            TimeElapsedSeconds = 30
+                        },
+                        new
+                        {
+                            SessionId = 6,
                             Attempts = 10,
                             IsCompleted = true,
                             Level = 1,
                             PairsCount = 6,
                             PlayedAt = new DateTime(2026, 11, 1, 12, 0, 0, 0, DateTimeKind.Utc),
-                            PlayerId = 3,
+                            PlayerId = 6,
                             Score = 890,
                             TimeElapsedSeconds = 33
                         });
@@ -349,19 +385,46 @@ namespace MemoryGameApi.Migrations
                         {
                             PlayerId = 2,
                             CreatedAt = new DateTime(2026, 11, 1, 12, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "noura@memorygame.sa",
+                            Email = "asia@memorygame.sa",
                             Password = "123456",
                             Role = "Player",
-                            Username = "نورة القحطاني"
+                            Username = "آسيا سعيد بن عبيد"
                         },
                         new
                         {
                             PlayerId = 3,
                             CreatedAt = new DateTime(2026, 11, 1, 12, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "reem@memorygame.sa",
+                            Email = "fatima@memorygame.sa",
                             Password = "123456",
                             Role = "Player",
-                            Username = "ريم الحربي"
+                            Username = "فاطمة عصام باطويل"
+                        },
+                        new
+                        {
+                            PlayerId = 4,
+                            CreatedAt = new DateTime(2026, 11, 1, 12, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "haneen@memorygame.sa",
+                            Password = "123456",
+                            Role = "Player",
+                            Username = "حنين عبدالعزيز باوزير"
+                        },
+                        new
+                        {
+                            PlayerId = 5,
+                            CreatedAt = new DateTime(2026, 11, 1, 12, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "sara@memorygame.sa",
+                            Password = "123456",
+                            Role = "Player",
+                            Username = "سارة عوض بن جوبح"
+                        },
+                        new
+                        {
+                            PlayerId = 6,
+                            CreatedAt = new DateTime(2026, 11, 1, 12, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "fatimab@memorygame.sa",
+                            Password = "123456",
+                            Role = "Player",
+                            Username = "فاطمة بازياد"
                         });
                 });
 
@@ -410,6 +473,34 @@ namespace MemoryGameApi.Migrations
                         new
                         {
                             PlayerId = 3,
+                            AchievementId = 1,
+                            DisplayOrder = 1,
+                            UnlockedAt = new DateTime(2026, 11, 1, 12, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            PlayerId = 3,
+                            AchievementId = 2,
+                            DisplayOrder = 2,
+                            UnlockedAt = new DateTime(2026, 11, 1, 12, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            PlayerId = 4,
+                            AchievementId = 1,
+                            DisplayOrder = 1,
+                            UnlockedAt = new DateTime(2026, 11, 1, 12, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            PlayerId = 5,
+                            AchievementId = 2,
+                            DisplayOrder = 1,
+                            UnlockedAt = new DateTime(2026, 11, 1, 12, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            PlayerId = 6,
                             AchievementId = 1,
                             DisplayOrder = 1,
                             UnlockedAt = new DateTime(2026, 11, 1, 12, 0, 0, 0, DateTimeKind.Utc)
@@ -472,10 +563,37 @@ namespace MemoryGameApi.Migrations
                         new
                         {
                             ProfileId = 3,
-                            AvatarEmoji = "🦊",
-                            HighestScore = 890,
+                            AvatarEmoji = "🌸",
+                            HighestScore = 1150,
                             PlayerId = 3,
                             PreferredTheme = "Royal Gold",
+                            TotalGamesPlayed = 6
+                        },
+                        new
+                        {
+                            ProfileId = 4,
+                            AvatarEmoji = "🦋",
+                            HighestScore = 1040,
+                            PlayerId = 4,
+                            PreferredTheme = "Soft Rose",
+                            TotalGamesPlayed = 4
+                        },
+                        new
+                        {
+                            ProfileId = 5,
+                            AvatarEmoji = "💎",
+                            HighestScore = 930,
+                            PlayerId = 5,
+                            PreferredTheme = "Ocean Pearl",
+                            TotalGamesPlayed = 5
+                        },
+                        new
+                        {
+                            ProfileId = 6,
+                            AvatarEmoji = "🌙",
+                            HighestScore = 890,
+                            PlayerId = 6,
+                            PreferredTheme = "Warm Mocha",
                             TotalGamesPlayed = 3
                         });
                 });

@@ -90,14 +90,20 @@ namespace MemoryGameApi.Data
 
             modelBuilder.Entity<Player>().HasData(
                 new Player { PlayerId = 1, Username = "عبير مقرم", Email = "abeer@gmail.com", Password = "1234", Role = "Admin", CreatedAt = seedDate },
-                new Player { PlayerId = 2, Username = "نورة القحطاني", Email = "noura@memorygame.sa", Password = "123456", Role = "Player", CreatedAt = seedDate },
-                new Player { PlayerId = 3, Username = "ريم الحربي", Email = "reem@memorygame.sa", Password = "123456", Role = "Player", CreatedAt = seedDate }
+                new Player { PlayerId = 2, Username = "آسيا سعيد بن عبيد", Email = "asia@memorygame.sa", Password = "123456", Role = "Player", CreatedAt = seedDate },
+                new Player { PlayerId = 3, Username = "فاطمة عصام باطويل", Email = "fatima@memorygame.sa", Password = "123456", Role = "Player", CreatedAt = seedDate },
+                new Player { PlayerId = 4, Username = "حنين عبدالعزيز باوزير", Email = "haneen@memorygame.sa", Password = "123456", Role = "Player", CreatedAt = seedDate },
+                new Player { PlayerId = 5, Username = "سارة عوض بن جوبح", Email = "sara@memorygame.sa", Password = "123456", Role = "Player", CreatedAt = seedDate },
+                new Player { PlayerId = 6, Username = "فاطمة بازياد", Email = "fatimab@memorygame.sa", Password = "123456", Role = "Player", CreatedAt = seedDate }
             );
 
             modelBuilder.Entity<PlayerProfile>().HasData(
                 new PlayerProfile { ProfileId = 1, PlayerId = 1, AvatarEmoji = "👩‍💻", PreferredTheme = "Cosmic Indigo", HighestScore = 980, TotalGamesPlayed = 5 },
                 new PlayerProfile { ProfileId = 2, PlayerId = 2, AvatarEmoji = "🌟", PreferredTheme = "Emerald Glow", HighestScore = 1420, TotalGamesPlayed = 8 },
-                new PlayerProfile { ProfileId = 3, PlayerId = 3, AvatarEmoji = "🦊", PreferredTheme = "Royal Gold", HighestScore = 890, TotalGamesPlayed = 3 }
+                new PlayerProfile { ProfileId = 3, PlayerId = 3, AvatarEmoji = "🌸", PreferredTheme = "Royal Gold", HighestScore = 1150, TotalGamesPlayed = 6 },
+                new PlayerProfile { ProfileId = 4, PlayerId = 4, AvatarEmoji = "🦋", PreferredTheme = "Soft Rose", HighestScore = 1040, TotalGamesPlayed = 4 },
+                new PlayerProfile { ProfileId = 5, PlayerId = 5, AvatarEmoji = "💎", PreferredTheme = "Ocean Pearl", HighestScore = 930, TotalGamesPlayed = 5 },
+                new PlayerProfile { ProfileId = 6, PlayerId = 6, AvatarEmoji = "🌙", PreferredTheme = "Warm Mocha", HighestScore = 890, TotalGamesPlayed = 3 }
             );
 
             modelBuilder.Entity<Achievement>().HasData(
@@ -110,13 +116,20 @@ namespace MemoryGameApi.Data
                 new PlayerAchievement { PlayerId = 1, AchievementId = 1, UnlockedAt = seedDate, DisplayOrder = 1 },
                 new PlayerAchievement { PlayerId = 2, AchievementId = 2, UnlockedAt = seedDate, DisplayOrder = 1 },
                 new PlayerAchievement { PlayerId = 2, AchievementId = 3, UnlockedAt = seedDate, DisplayOrder = 2 },
-                new PlayerAchievement { PlayerId = 3, AchievementId = 1, UnlockedAt = seedDate, DisplayOrder = 1 }
+                new PlayerAchievement { PlayerId = 3, AchievementId = 1, UnlockedAt = seedDate, DisplayOrder = 1 },
+                new PlayerAchievement { PlayerId = 3, AchievementId = 2, UnlockedAt = seedDate, DisplayOrder = 2 },
+                new PlayerAchievement { PlayerId = 4, AchievementId = 1, UnlockedAt = seedDate, DisplayOrder = 1 },
+                new PlayerAchievement { PlayerId = 5, AchievementId = 2, UnlockedAt = seedDate, DisplayOrder = 1 },
+                new PlayerAchievement { PlayerId = 6, AchievementId = 1, UnlockedAt = seedDate, DisplayOrder = 1 }
             );
 
             modelBuilder.Entity<GameSession>().HasData(
                 new GameSession { SessionId = 1, PlayerId = 2, Level = 2, PairsCount = 10, Attempts = 14, TimeElapsedSeconds = 42, Score = 1420, IsCompleted = true, PlayedAt = seedDate },
-                new GameSession { SessionId = 2, PlayerId = 1, Level = 1, PairsCount = 6, Attempts = 8, TimeElapsedSeconds = 26, Score = 980, IsCompleted = true, PlayedAt = seedDate },
-                new GameSession { SessionId = 3, PlayerId = 3, Level = 1, PairsCount = 6, Attempts = 10, TimeElapsedSeconds = 33, Score = 890, IsCompleted = true, PlayedAt = seedDate }
+                new GameSession { SessionId = 2, PlayerId = 3, Level = 2, PairsCount = 10, Attempts = 16, TimeElapsedSeconds = 48, Score = 1150, IsCompleted = true, PlayedAt = seedDate },
+                new GameSession { SessionId = 3, PlayerId = 4, Level = 1, PairsCount = 6, Attempts = 7, TimeElapsedSeconds = 24, Score = 1040, IsCompleted = true, PlayedAt = seedDate },
+                new GameSession { SessionId = 4, PlayerId = 1, Level = 1, PairsCount = 6, Attempts = 8, TimeElapsedSeconds = 26, Score = 980, IsCompleted = true, PlayedAt = seedDate },
+                new GameSession { SessionId = 5, PlayerId = 5, Level = 1, PairsCount = 6, Attempts = 9, TimeElapsedSeconds = 30, Score = 930, IsCompleted = true, PlayedAt = seedDate },
+                new GameSession { SessionId = 6, PlayerId = 6, Level = 1, PairsCount = 6, Attempts = 10, TimeElapsedSeconds = 33, Score = 890, IsCompleted = true, PlayedAt = seedDate }
             );
         }
     }
