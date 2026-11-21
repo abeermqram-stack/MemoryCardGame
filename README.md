@@ -11,6 +11,28 @@
 
 ---
 
+## الروابط المباشرة للمشروع (Live Links)
+* **موقع Angular — صفحة اللعب الرئيسية:** https://abeermqram-stack.github.io/MemoryCardGame/game
+* **صفحة اللاعبة (تسجيل الدخول / حساب جديد / الملف الشخصي / الأوسمة / جدول التقدم):** https://abeermqram-stack.github.io/MemoryCardGame/player
+* **لوحة المشرف (Admin — إدارة البطاقات والنتائج):** https://abeermqram-stack.github.io/MemoryCardGame/admin
+* **صفحة السواقر (Swagger API):** https://abeermqram-stack.github.io/MemoryCardGame/swagger/
+
+### روابط الكود على GitHub
+* **المستودع الكامل:** https://github.com/abeermqram-stack/MemoryCardGame
+* **الـ Backend (ASP.NET Core Web API + EF Core):** https://github.com/abeermqram-stack/MemoryCardGame/tree/main/MemoryGameApi
+* **الـ Frontend (Angular):** https://github.com/abeermqram-stack/MemoryCardGame/tree/main/memory-game-client
+
+### بيانات تسجيل الدخول للتجربة
+* **المشرف (Admin):** `abeer@gmail.com` — كلمة المرور: `1234`
+* **حسابات اللاعبات (كلمة المرور للجميع: `123456`):**
+  * `asia@memorygame.sa`
+  * `fatima@memorygame.sa`
+  * `haneen@memorygame.sa`
+  * `sara@memorygame.sa`
+  * `fatimab@memorygame.sa`
+
+---
+
 ## 1. قاعدة البيانات والـ Models (EF Core Code-First)
 * **الـ Models (`MemoryGameApi/Models`):**
   * `Player` (اللاعب)
