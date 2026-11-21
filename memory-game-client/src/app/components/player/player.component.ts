@@ -75,9 +75,14 @@ export class PlayerComponent implements OnInit {
       return;
     }
 
+    if (!this.playerRegEmail.trim().includes('@')) {
+      this.playerAuthMessage = 'الرجاء إدخال بريد إلكتروني صحيح (مثال: name@email.com)';
+      return;
+    }
+
     const newPlayer: Partial<IPlayer> = {
-      username: this.playerRegName,
-      email: this.playerRegEmail,
+      username: this.playerRegName.trim(),
+      email: this.playerRegEmail.trim(),
       password: this.playerRegPassword,
       role: 'Player'
     };
@@ -90,8 +95,12 @@ export class PlayerComponent implements OnInit {
         this.playerRegPassword = '';
         this.loadSessions();
       },
-      error: () => {
-        this.playerAuthMessage = 'تعذر إنشاء الحساب، تأكدي من البيانات';
+      error: err => {
+        if (err?.message === 'EMAIL_EXISTS') {
+          this.playerAuthMessage = 'هذا البريد الإلكتروني مسجّل مسبقاً، يمكنكِ تسجيل الدخول به أو استخدام بريد آخر';
+        } else {
+          this.playerAuthMessage = 'تعذر إنشاء الحساب، تأكدي من صحة البيانات والبريد الإلكتروني';
+        }
       }
     });
   }
