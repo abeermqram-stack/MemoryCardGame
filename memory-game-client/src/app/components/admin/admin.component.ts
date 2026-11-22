@@ -52,16 +52,23 @@ export class AdminComponent implements OnInit, OnDestroy {
     return this.authState.getAdmin();
   }
 
+  private isCardInLevel(card: ICardItem, level: number): boolean {
+    if (level === 1) {
+      return card.levelDifficulty === 1;
+    }
+    return card.levelDifficulty === 2 || (card.levelDifficulty === 1 && card.cardId <= 6);
+  }
+
   get level1Count(): number {
-    return this.allCards.filter(c => c.levelDifficulty === 1).length;
+    return this.allCards.filter(c => this.isCardInLevel(c, 1)).length;
   }
 
   get level2Count(): number {
-    return this.allCards.filter(c => c.levelDifficulty === 2).length;
+    return this.allCards.filter(c => this.isCardInLevel(c, 2)).length;
   }
 
   get visibleCards(): ICardItem[] {
-    return this.displayedCards.filter(c => c.levelDifficulty === this.selectedAdminLevel);
+    return this.displayedCards.filter(c => this.isCardInLevel(c, this.selectedAdminLevel));
   }
 
   ngOnInit(): void {
@@ -188,7 +195,7 @@ export class AdminComponent implements OnInit, OnDestroy {
     this.apiService.searchCards(trimmed).subscribe({
       next: cards => {
         this.displayedCards = cards;
-        const levelMatches = cards.filter(c => c.levelDifficulty === this.selectedAdminLevel).length;
+        const levelMatches = cards.filter(c => this.isCardInLevel(c, this.selectedAdminLevel)).length;
         const levelLabel = this.selectedAdminLevel === 1 ? 'الأول' : 'الثاني';
         if (levelMatches > 0) {
           this.showFeedback(`تم العثور على ${levelMatches} بطاقة في المستوى ${levelLabel} مطابقة للبحث "${trimmed}".`, 'info');

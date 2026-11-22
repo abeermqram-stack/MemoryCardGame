@@ -15,11 +15,23 @@ namespace MemoryGameApi.Services
         public List<CardItem> GetAllCards() =>
             _dbContext.CardItems.OrderBy(c => c.CardId).ToList();
 
-        public List<CardItem> GetCardsByLevel(int level) =>
-            _dbContext.CardItems
-                .Where(c => c.IsActive && c.LevelDifficulty == level)
+        private const int DefaultLevel1MaxCardId = 6;
+
+        public List<CardItem> GetCardsByLevel(int level)
+        {
+            if (level == 1)
+            {
+                return _dbContext.CardItems
+                    .Where(c => c.IsActive && c.LevelDifficulty == 1)
+                    .OrderBy(c => c.CardId)
+                    .ToList();
+            }
+
+            return _dbContext.CardItems
+                .Where(c => c.IsActive && (c.LevelDifficulty == 2 || (c.LevelDifficulty == 1 && c.CardId <= DefaultLevel1MaxCardId)))
                 .OrderBy(c => c.CardId)
                 .ToList();
+        }
 
         public List<CardItem> SearchCards(string keyword) =>
             _dbContext.CardItems

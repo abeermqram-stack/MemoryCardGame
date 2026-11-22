@@ -52,7 +52,9 @@ namespace MemoryGameApi.Services
             session.PlayedAt = DateTime.UtcNow;
             if (session.PairsCount < 1)
             {
-                session.PairsCount = _dbContext.CardItems.Count(c => c.IsActive && c.LevelDifficulty == session.Level);
+                session.PairsCount = session.Level == 1
+                    ? _dbContext.CardItems.Count(c => c.IsActive && c.LevelDifficulty == 1)
+                    : _dbContext.CardItems.Count(c => c.IsActive && (c.LevelDifficulty == 2 || (c.LevelDifficulty == 1 && c.CardId <= 6)));
                 if (session.PairsCount < 1)
                 {
                     session.PairsCount = 1;

@@ -171,7 +171,9 @@
             <td class="icon-cell">{{ c.icon }}</td>
             <td>{{ c.title }}</td>
             <td>{{ c.category }}</td>
-            <td>المستوى {{ c.levelDifficulty }}</td>
+            <td>
+              {{ selectedAdminLevel === 2 && c.levelDifficulty === 1 ? 'المستوى 1 (افتراضية)' : ('المستوى ' + c.levelDifficulty) }}
+            </td>
             <td><strong>{{ (c.points || 100) | number }} نقطة</strong></td>
             <td>
               <button type="button" class="btn-edit" (click)="editCard(c)">تعديل</button>
