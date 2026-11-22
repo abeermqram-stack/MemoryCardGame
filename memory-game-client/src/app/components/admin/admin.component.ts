@@ -210,10 +210,11 @@ export class AdminComponent implements OnInit, OnDestroy {
     } else {
       const { cardId, ...newCard } = payload;
       this.apiService.addCard(newCard).subscribe({
-        next: () => {
+        next: created => {
+          const savedPoints = created?.points ?? points;
           this.resetForm();
           this.loadData();
-          this.showFeedback(`تمت إضافة البطاقة "${title}" بقيمة ${points} نقطة بنجاح.`, 'success');
+          this.showFeedback(`تمت إضافة البطاقة "${title}" بقيمة ${savedPoints} نقطة بنجاح.`, 'success');
         },
         error: () => {
           this.showFeedback('تعذر إضافة البطاقة، يرجى التحقق من البيانات.', 'error');
