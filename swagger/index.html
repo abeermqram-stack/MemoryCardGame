@@ -77,11 +77,29 @@
       }
 
       function ensureCardPoints(db) {
-        const seedPoints = { 1: 100, 2: 100, 3: 150, 4: 150, 5: 120, 6: 100, 7: 200, 8: 180, 9: 180, 10: 200 };
+        const seedDefaults = {
+          1: { title: 'صاروخ الفضاء', points: 100 },
+          2: { title: 'كوكب زحل', points: 100 },
+          3: { title: 'الجوهرة الماسية', points: 150 },
+          4: { title: 'التاج الملكي', points: 150 },
+          5: { title: 'الصاعقة الذهبية', points: 120 },
+          6: { title: 'النجمة المضيئة', points: 100 },
+          7: { title: 'التنين الناري', points: 200 },
+          8: { title: 'الكريستال السحري', points: 180 },
+          9: { title: 'درع الفرسان', points: 180 },
+          10: { title: 'المفتاح الذهبي', points: 200 }
+        };
         let changed = false;
         for (const c of db.cards) {
-          if (typeof c.points !== 'number' || c.points < 10) {
-            c.points = seedPoints[c.cardId] || 100;
+          const parsed = Number(c.points);
+          if (!isNaN(parsed) && parsed >= 10 && parsed <= 1000) {
+            if (typeof c.points !== 'number') {
+              c.points = parsed;
+              changed = true;
+            }
+          } else {
+            const seed = seedDefaults[c.cardId];
+            c.points = seed && seed.title === c.title ? seed.points : 100;
             changed = true;
           }
         }
@@ -175,7 +193,7 @@
           return jsonResponse([...db.cards].sort((a, b) => a.cardId - b.cardId));
         }
         if (path === '/api/Cards' && method === 'POST') {
-          const nextId = db.cards.reduce((mx, c) => Math.max(mx, c.cardId), 0) + 1;
+          const nextId = Math.max(10, db.cards.reduce((mx, c) => Math.max(mx, c.cardId), 0)) + 1;
           const pts = Number(body?.points);
           const created = {
             cardId: nextId,
@@ -223,7 +241,13 @@
           }
           if (method === 'PUT') {
             if (idx === -1) return jsonResponse('No Card was found', 404);
-            db.cards[idx] = { ...db.cards[idx], ...body, cardId: id };
+            const pts = Number(body?.points);
+            db.cards[idx] = {
+              ...db.cards[idx],
+              ...body,
+              points: !isNaN(pts) && pts >= 10 && pts <= 1000 ? pts : db.cards[idx].points,
+              cardId: id
+            };
             saveDb(db);
             return jsonResponse(db.cards[idx]);
           }
