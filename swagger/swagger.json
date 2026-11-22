@@ -681,8 +681,8 @@
             "format": "int32"
           },
           "pairsCount": {
-            "maximum": 10,
-            "minimum": 6,
+            "maximum": 100,
+            "minimum": 1,
             "type": "integer",
             "format": "int32"
           },

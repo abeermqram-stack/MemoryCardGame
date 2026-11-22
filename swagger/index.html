@@ -213,9 +213,9 @@
         if ((m = path.match(/^\/api\/Cards\/level\/(\d+)$/)) && method === 'GET') {
           const level = Number(m[1]);
           if (level < 1 || level > 2) return jsonResponse('Level must be 1 or 2', 404);
-          const req = level === 1 ? 6 : 10;
-          let active = db.cards.filter(c => c.isActive && c.levelDifficulty <= level).sort((a, b) => a.cardId - b.cardId).slice(0, req);
-          if (active.length < req) active = db.cards.filter(c => c.isActive).sort((a, b) => a.cardId - b.cardId).slice(0, req);
+          const active = db.cards
+            .filter(c => c.isActive && c.levelDifficulty === level)
+            .sort((a, b) => a.cardId - b.cardId);
           return jsonResponse(active);
         }
         if (path === '/api/Cards/search' && method === 'GET') {
@@ -279,10 +279,12 @@
           }
           const nextId = db.sessions.reduce((mx, s) => Math.max(mx, s.sessionId || 0), 0) + 1;
           const level = Number(body?.level) || 1;
+          const levelPairs = db.cards.filter(c => c.isActive && c.levelDifficulty === level).length;
+          const reqPairs = Number(body?.pairsCount);
           const created = {
             sessionId: nextId,
             level,
-            pairsCount: level === 1 ? 6 : 10,
+            pairsCount: !isNaN(reqPairs) && reqPairs >= 1 ? reqPairs : Math.max(1, levelPairs),
             attempts: Number(body?.attempts) || 6,
             timeElapsedSeconds: Number(body?.timeElapsedSeconds) || 20,
             score: Number(body?.score) || 900,
