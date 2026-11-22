@@ -3,14 +3,15 @@
     <h2>تسجيل دخول المشرف (Admin)</h2>
     <p class="sub-note">هذه الصفحة مخصصة للمشرف فقط لإضافة وتعديل وحذف البطاقات والنتائج.</p>
 
-    <form class="vertical-form" (ngSubmit)="loginAsAdmin()">
+    <form class="vertical-form" (ngSubmit)="loginAsAdmin()" autocomplete="off">
       <div class="form-field">
         <label>بريد المشرف</label>
         <input
           type="email"
           name="adminEmail"
           [(ngModel)]="adminEmail"
-          placeholder="abeer@gmail.com"
+          placeholder="أدخل البريد الإلكتروني للمشرف"
+          autocomplete="off"
           required />
       </div>
       <div class="form-field">
@@ -19,7 +20,8 @@
           type="password"
           name="adminPassword"
           [(ngModel)]="adminPassword"
-          placeholder="كلمة المرور"
+          placeholder="أدخل كلمة المرور"
+          autocomplete="new-password"
           required />
       </div>
       <button
@@ -114,6 +116,41 @@
     </section>
 
     <section class="card-box">
+      <h2>إدارة حسابات اللاعبين</h2>
+      <p class="sub-note">حذف حساب اللاعب يزيله نهائياً من قاعدة البيانات مع جميع نتائجه وأوسمته وملفه الشخصي.</p>
+      <p class="status-text" *ngIf="adminActionMessage">{{ adminActionMessage }}</p>
+      <table class="simple-table">
+        <thead>
+          <tr>
+            <th>اسم اللاعب</th>
+            <th>البريد الإلكتروني</th>
+            <th>أعلى نقاط</th>
+            <th>عدد الجولات</th>
+            <th>الأوسمة</th>
+            <th>حذف الحساب</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of players">
+            <td>{{ p.username }}</td>
+            <td>{{ p.email }}</td>
+            <td><strong>{{ (p.profile?.highestScore || 0) | number }}</strong></td>
+            <td>{{ p.profile?.totalGamesPlayed || 0 }}</td>
+            <td>{{ p.playerAchievements?.length || 0 }}</td>
+            <td>
+              <button type="button" class="btn-delete" (click)="deletePlayer(p)">
+                حذف الحساب نهائياً
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="players.length === 0">
+            <td colspan="6" class="empty-cell">لا توجد حسابات لاعبين مسجّلة حالياً.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card-box">
       <h2>إدارة وحذف نتائج اللاعبات</h2>
       <table class="simple-table">
         <thead>
@@ -135,9 +172,12 @@
             <td><strong>{{ s.score | number }}</strong></td>
             <td>
               <button type="button" class="btn-delete" (click)="deleteSession(s.sessionId)">
-                حذف
+                حذف النتيجة
               </button>
             </td>
+          </tr>
+          <tr *ngIf="sessions.length === 0">
+            <td colspan="6" class="empty-cell">لا توجد نتائج مسجّلة حالياً.</td>
           </tr>
         </tbody>
       </table>

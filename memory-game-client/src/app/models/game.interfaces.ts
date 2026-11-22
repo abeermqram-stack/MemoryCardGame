@@ -88,9 +88,11 @@ export interface IGameApiClient {
   getAllSessions(): Observable<IGameSession[]>;
   addSession(session: IGameSession): Observable<IGameSession>;
   deleteSession(id: number): Observable<any>;
+  getAllPlayers(): Observable<IPlayer[]>;
   getPlayerById(id: number): Observable<IPlayer>;
   login(email: string, password: string): Observable<IPlayer>;
   registerPlayer(player: Partial<IPlayer>): Observable<IPlayer>;
+  deletePlayer(id: number): Observable<any>;
 }
 
 export interface IAuthStateService {

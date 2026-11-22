@@ -63,6 +63,7 @@ export class GameComponent implements OnInit, OnDestroy {
 
     this.apiService.getCardsByLevel(level).subscribe(cards => {
       this.boardCards = this.gameEngine.buildBoardDeck(cards, level);
+      this.totalPairsCount = this.boardCards.length / 2;
     });
   }
 
@@ -118,6 +119,10 @@ export class GameComponent implements OnInit, OnDestroy {
 
   saveWinSession(): void {
     const currentPlayer = this.authState.getPlayer();
+    if (!currentPlayer) {
+      return;
+    }
+
     const newSession: IGameSession = {
       level: this.selectedLevel,
       pairsCount: this.totalPairsCount,
@@ -125,14 +130,26 @@ export class GameComponent implements OnInit, OnDestroy {
       timeElapsedSeconds: Math.max(1, this.elapsedSeconds),
       score: this.currentScore,
       isCompleted: true,
-      playerId: currentPlayer ? currentPlayer.playerId : 2
+      playerId: currentPlayer.playerId
     };
 
-    this.apiService.addSession(newSession).subscribe(() => {
-      if (currentPlayer) {
-        this.apiService.getPlayerById(currentPlayer.playerId).subscribe(updated => {
-          this.authState.setPlayer(updated);
+    this.apiService.addSession(newSession).subscribe({
+      next: () => {
+        this.apiService.getPlayerById(currentPlayer.playerId).subscribe({
+          next: updated => {
+            this.authState.setPlayer(updated);
+          },
+          error: err => {
+            if (err?.status === 404) {
+              this.authState.logoutPlayer();
+            }
+          }
         });
+      },
+      error: err => {
+        if (err?.status === 404) {
+          this.authState.logoutPlayer();
+        }
       }
     });
   }

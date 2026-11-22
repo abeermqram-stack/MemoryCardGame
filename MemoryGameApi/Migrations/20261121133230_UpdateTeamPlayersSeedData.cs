@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -13,6 +13,30 @@ namespace MemoryGameApi.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.UpdateData(
+                table: "Players",
+                keyColumn: "PlayerId",
+                keyValue: 2,
+                columns: new[] { "PlayerEmail", "PlayerName" },
+                values: new object[] { "asia@memorygame.sa", "آسيا سعيد بن عبيد" });
+
+            migrationBuilder.UpdateData(
+                table: "Players",
+                keyColumn: "PlayerId",
+                keyValue: 3,
+                columns: new[] { "PlayerEmail", "PlayerName" },
+                values: new object[] { "fatima@memorygame.sa", "فاطمة عصام باطويل" });
+
+            migrationBuilder.InsertData(
+                table: "Players",
+                columns: new[] { "PlayerId", "CreatedAt", "PlayerEmail", "Password", "Role", "PlayerName" },
+                values: new object[,]
+                {
+                    { 4, new DateTime(2026, 11, 1, 12, 0, 0, 0, DateTimeKind.Utc), "haneen@memorygame.sa", "123456", "Player", "حنين عبدالعزيز باوزير" },
+                    { 5, new DateTime(2026, 11, 1, 12, 0, 0, 0, DateTimeKind.Utc), "sara@memorygame.sa", "123456", "Player", "سارة عوض بن جوبح" },
+                    { 6, new DateTime(2026, 11, 1, 12, 0, 0, 0, DateTimeKind.Utc), "fatimab@memorygame.sa", "123456", "Player", "فاطمة بازياد" }
+                });
+
             migrationBuilder.UpdateData(
                 table: "GameSessions",
                 keyColumn: "SessionId",
@@ -43,30 +67,6 @@ namespace MemoryGameApi.Migrations
                 keyValue: 3,
                 columns: new[] { "AvatarEmoji", "HighestScore", "TotalGamesPlayed" },
                 values: new object[] { "🌸", 1150, 6 });
-
-            migrationBuilder.UpdateData(
-                table: "Players",
-                keyColumn: "PlayerId",
-                keyValue: 2,
-                columns: new[] { "PlayerEmail", "PlayerName" },
-                values: new object[] { "asia@memorygame.sa", "آسيا سعيد بن عبيد" });
-
-            migrationBuilder.UpdateData(
-                table: "Players",
-                keyColumn: "PlayerId",
-                keyValue: 3,
-                columns: new[] { "PlayerEmail", "PlayerName" },
-                values: new object[] { "fatima@memorygame.sa", "فاطمة عصام باطويل" });
-
-            migrationBuilder.InsertData(
-                table: "Players",
-                columns: new[] { "PlayerId", "CreatedAt", "PlayerEmail", "Password", "Role", "PlayerName" },
-                values: new object[,]
-                {
-                    { 4, new DateTime(2026, 11, 1, 12, 0, 0, 0, DateTimeKind.Utc), "haneen@memorygame.sa", "123456", "Player", "حنين عبدالعزيز باوزير" },
-                    { 5, new DateTime(2026, 11, 1, 12, 0, 0, 0, DateTimeKind.Utc), "sara@memorygame.sa", "123456", "Player", "سارة عوض بن جوبح" },
-                    { 6, new DateTime(2026, 11, 1, 12, 0, 0, 0, DateTimeKind.Utc), "fatimab@memorygame.sa", "123456", "Player", "فاطمة بازياد" }
-                });
 
             migrationBuilder.InsertData(
                 table: "GameSessions",

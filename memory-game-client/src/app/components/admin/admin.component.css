@@ -3,3 +3,20 @@
   border-top: 1px dashed #c49a6c;
 }
 
+.status-text {
+  color: #593426;
+  background-color: #e6d7be;
+  border: 1px solid #8c583a;
+  border-radius: 10px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.86rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+.empty-cell {
+  text-align: center;
+  color: #8c583a;
+  font-weight: 600;
+}
+

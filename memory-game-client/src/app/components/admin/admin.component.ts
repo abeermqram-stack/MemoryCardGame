@@ -14,11 +14,13 @@ import { TimeFormatPipe } from '../../pipes/time-format.pipe';
   styleUrls: ['./admin.component.css']
 })
 export class AdminComponent implements OnInit {
-  adminEmail: string = 'abeer@gmail.com';
-  adminPassword: string = '1234';
+  adminEmail: string = '';
+  adminPassword: string = '';
   adminLoginError: string = '';
+  adminActionMessage: string = '';
 
   allCards: ICardItem[] = [];
+  players: IPlayer[] = [];
   sessions: IGameSession[] = [];
   searchKeyword: string = '';
 
@@ -43,12 +45,18 @@ export class AdminComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadData();
+    if (this.loggedInAdmin) {
+      this.loadData();
+    }
   }
 
   loadData(): void {
     this.apiService.getAllCards().subscribe(cards => {
       this.allCards = cards;
+    });
+
+    this.apiService.getAllPlayers().subscribe(players => {
+      this.players = players.filter(p => p.role !== 'Admin');
     });
 
     this.apiService.getAllSessions().subscribe(sessions => {
@@ -58,23 +66,46 @@ export class AdminComponent implements OnInit {
 
   loginAsAdmin(): void {
     this.adminLoginError = '';
-    this.apiService.login(this.adminEmail, this.adminPassword).subscribe({
+    if (!this.adminEmail.trim() || !this.adminPassword.trim()) {
+      this.adminLoginError = 'الرجاء إدخال البريد الإلكتروني وكلمة المرور';
+      return;
+    }
+
+    this.apiService.login(this.adminEmail.trim(), this.adminPassword).subscribe({
       next: user => {
         if (user.role === 'Admin') {
           this.authState.setAdmin(user);
+          this.adminEmail = '';
+          this.adminPassword = '';
+          this.adminActionMessage = '';
           this.loadData();
         } else {
-          this.adminLoginError = 'عفواً، هذا الحساب للاعبة عادية وليس حساب مشرف (Admin)';
+          this.adminLoginError = 'عفواً، هذا الحساب للاعب عادي وليس حساب مشرف (Admin)';
         }
       },
-      error: () => {
-        this.adminLoginError = 'بيانات المشرف غير صحيحة';
+      error: err => {
+        if (err?.status === 0) {
+          this.adminLoginError = 'تعذر الاتصال بالخادم (API). تأكدي من تشغيل الـ Backend على المنفذ 5150.';
+        } else if (err?.error?.code === 'ACCOUNT_NOT_FOUND' || err?.status === 404) {
+          this.adminLoginError = 'لا يوجد حساب مسجّل بهذا البريد الإلكتروني';
+        } else if (err?.error?.code === 'INVALID_PASSWORD' || err?.status === 401) {
+          this.adminLoginError = 'كلمة المرور غير صحيحة';
+        } else {
+          this.adminLoginError = 'بيانات المشرف غير صحيحة';
+        }
       }
     });
   }
 
   logoutAdmin(): void {
     this.authState.logoutAdmin();
+    this.adminEmail = '';
+    this.adminPassword = '';
+    this.adminLoginError = '';
+    this.adminActionMessage = '';
+    this.allCards = [];
+    this.players = [];
+    this.sessions = [];
   }
 
   searchCards(): void {
@@ -129,6 +160,28 @@ export class AdminComponent implements OnInit {
     if (!this.loggedInAdmin || !id) return;
     this.apiService.deleteSession(id).subscribe(() => {
       this.loadData();
+    });
+  }
+
+  deletePlayer(player: IPlayer): void {
+    if (!this.loggedInAdmin) return;
+    const confirmed = window.confirm(
+      `هل أنتِ متأكدة من حذف حساب "${player.username}" (${player.email}) نهائياً؟ سيتم حذف الحساب وجميع نتائجه وبياناته السابقة من قاعدة البيانات.`
+    );
+    if (!confirmed) return;
+
+    this.adminActionMessage = '';
+    this.apiService.deletePlayer(player.playerId).subscribe({
+      next: () => {
+        if (this.authState.getPlayer()?.playerId === player.playerId) {
+          this.authState.logoutPlayer();
+        }
+        this.adminActionMessage = `تم حذف حساب "${player.username}" وجميع بياناته نهائياً من قاعدة البيانات.`;
+        this.loadData();
+      },
+      error: err => {
+        this.adminActionMessage = err?.error?.message || 'تعذر حذف حساب اللاعب.';
+      }
     });
   }
 

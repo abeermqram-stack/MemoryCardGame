@@ -6,6 +6,7 @@ namespace MemoryGameApi.Services
     {
         List<Player> GetAllPlayers();
         Player? GetPlayerById(int id);
+        Player? GetPlayerByEmail(string email);
         Player? Login(string email, string password);
         List<Player> SearchPlayersByName(string keyword);
         Player AddPlayer(Player player);

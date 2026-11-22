@@ -46,8 +46,9 @@ namespace MemoryGameApi.Services
                 .Include(gs => gs.Player)
                 .FirstOrDefault(gs => gs.SessionId == id);
 
-        public GameSession AddSession(GameSession session)
+        public GameSession? AddSession(GameSession session)
         {
+            session.SessionId = 0;
             session.PlayedAt = DateTime.UtcNow;
             session.PairsCount = session.Level == 1 ? 6 : 10;
 
@@ -58,14 +59,7 @@ namespace MemoryGameApi.Services
 
             if (player == null)
             {
-                player = _dbContext.Players
-                    .Include(p => p.Profile)
-                    .Include(p => p.PlayerAchievements)
-                    .FirstOrDefault();
-                if (player != null)
-                {
-                    session.PlayerId = player.PlayerId;
-                }
+                return null;
             }
 
             session.Player = null;
@@ -140,6 +134,18 @@ namespace MemoryGameApi.Services
             existing.IsCompleted = updatedSession.IsCompleted;
 
             _dbContext.SaveChanges();
+
+            var profile = _dbContext.PlayerProfiles.FirstOrDefault(p => p.PlayerId == existing.PlayerId);
+            if (profile != null)
+            {
+                var remainingSessions = _dbContext.GameSessions
+                    .Where(s => s.PlayerId == existing.PlayerId)
+                    .ToList();
+                profile.TotalGamesPlayed = remainingSessions.Count;
+                profile.HighestScore = remainingSessions.Any() ? remainingSessions.Max(s => s.Score) : 0;
+                _dbContext.SaveChanges();
+            }
+
             return true;
         }
 
@@ -149,8 +155,21 @@ namespace MemoryGameApi.Services
             if (existing == null)
                 return false;
 
+            var playerId = existing.PlayerId;
             _dbContext.GameSessions.Remove(existing);
             _dbContext.SaveChanges();
+
+            var profile = _dbContext.PlayerProfiles.FirstOrDefault(p => p.PlayerId == playerId);
+            if (profile != null)
+            {
+                var remainingSessions = _dbContext.GameSessions
+                    .Where(s => s.PlayerId == playerId)
+                    .ToList();
+                profile.TotalGamesPlayed = remainingSessions.Count;
+                profile.HighestScore = remainingSessions.Any() ? remainingSessions.Max(s => s.Score) : 0;
+                _dbContext.SaveChanges();
+            }
+
             return true;
         }
     }

@@ -34,11 +34,17 @@ namespace MemoryGameApi.Controllers
         [HttpGet("login")]
         public IActionResult Login([FromQuery] string email, [FromQuery] string password)
         {
-            var player = _playerService.Login(email, password);
-            if (player == null)
-                return NotFound("Invalid email or password");
+            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
+                return BadRequest(new { code = "MISSING_CREDENTIALS", message = "الرجاء إدخال البريد الإلكتروني وكلمة المرور" });
 
-            return Ok(player);
+            var existingByEmail = _playerService.GetPlayerByEmail(email);
+            if (existingByEmail == null)
+                return NotFound(new { code = "ACCOUNT_NOT_FOUND", message = "لا يوجد حساب مسجّل بهذا البريد الإلكتروني، يجب عليك إنشاء حساب جديد أولاً." });
+
+            if (existingByEmail.Password != password)
+                return Unauthorized(new { code = "INVALID_PASSWORD", message = "كلمة المرور غير صحيحة" });
+
+            return Ok(existingByEmail);
         }
 
         [HttpGet("search/{keyword:alpha}")]
@@ -50,6 +56,12 @@ namespace MemoryGameApi.Controllers
         [HttpPost]
         public IActionResult AddPlayer([FromBody] Player player)
         {
+            if (string.IsNullOrWhiteSpace(player.Email) || string.IsNullOrWhiteSpace(player.Username) || string.IsNullOrWhiteSpace(player.Password))
+                return BadRequest(new { code = "MISSING_FIELDS", message = "الرجاء تعبئة الاسم والبريد الإلكتروني وكلمة المرور" });
+
+            if (_playerService.GetPlayerByEmail(player.Email) != null)
+                return Conflict(new { code = "EMAIL_EXISTS", message = "هذا البريد الإلكتروني مسجّل مسبقاً" });
+
             var created = _playerService.AddPlayer(player);
             return Ok(created);
         }
@@ -57,22 +69,33 @@ namespace MemoryGameApi.Controllers
         [HttpPut("{id:int:min(1)}")]
         public IActionResult UpdatePlayer([FromRoute] int id, [FromBody] Player player)
         {
+            var byEmail = _playerService.GetPlayerByEmail(player.Email);
+            if (byEmail != null && byEmail.PlayerId != id)
+                return Conflict(new { code = "EMAIL_EXISTS", message = "هذا البريد الإلكتروني مستخدم لحساب آخر" });
+
             player.PlayerId = id;
             var updated = _playerService.UpdatePlayer(player);
             if (!updated)
                 return NotFound("No Player was found");
 
-            return Ok(player);
+            return Ok(_playerService.GetPlayerById(id));
         }
 
         [HttpDelete("{id:int:min(1)}")]
         public IActionResult DeletePlayer([FromRoute] int id)
         {
+            var existing = _playerService.GetPlayerById(id);
+            if (existing == null)
+                return NotFound(new { code = "ACCOUNT_NOT_FOUND", message = "لم يتم العثور على الحساب" });
+
+            if (string.Equals(existing.Role, "Admin", StringComparison.OrdinalIgnoreCase))
+                return BadRequest(new { code = "CANNOT_DELETE_ADMIN", message = "لا يمكن حذف حساب المشرف" });
+
             var deleted = _playerService.DeletePlayer(id);
             if (!deleted)
-                return NotFound("No Player was found");
+                return NotFound(new { code = "ACCOUNT_NOT_FOUND", message = "لم يتم العثور على الحساب" });
 
-            return Ok(new { message = "Player Deleted Successfully" });
+            return Ok(new { message = "تم حذف حساب اللاعب وجميع بياناته نهائياً من قاعدة البيانات" });
         }
     }
 }

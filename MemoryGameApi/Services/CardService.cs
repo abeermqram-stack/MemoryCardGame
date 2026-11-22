@@ -48,6 +48,10 @@ namespace MemoryGameApi.Services
 
         public CardItem AddCard(CardItem card)
         {
+            card.CardId = 0;
+            card.Title = (card.Title ?? string.Empty).Trim();
+            card.Icon = (card.Icon ?? string.Empty).Trim();
+            card.Category = string.IsNullOrWhiteSpace(card.Category) ? "عام" : card.Category.Trim();
             _dbContext.CardItems.Add(card);
             _dbContext.SaveChanges();
             return card;

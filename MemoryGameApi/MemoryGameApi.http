@@ -42,7 +42,7 @@ GET {{baseUrl}}/api/Players
 Accept: application/json
 
 ### 8. Search Players by alphabetical keyword - Route Constraint :alpha
-GET {{baseUrl}}/api/Players/search/noura
+GET {{baseUrl}}/api/Players/search/asia
 Accept: application/json
 
 ### 9. Get Paged GameSessions ([FromQuery] parameters)

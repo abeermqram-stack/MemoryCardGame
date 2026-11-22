@@ -1,5 +1,7 @@
 using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 using MemoryGameApi.Data;
+using MemoryGameApi.Models;
 using MemoryGameApi.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,6 +11,24 @@ builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.TypeInfoResolver = new DefaultJsonTypeInfoResolver
+        {
+            Modifiers =
+            {
+                typeInfo =>
+                {
+                    if (typeInfo.Type == typeof(Player))
+                    {
+                        var passwordProp = typeInfo.Properties.FirstOrDefault(
+                            p => string.Equals(p.Name, "password", StringComparison.OrdinalIgnoreCase));
+                        if (passwordProp != null)
+                        {
+                            passwordProp.ShouldSerialize = (_, _) => false;
+                        }
+                    }
+                }
+            }
+        };
     });
 
 builder.Services.AddDbContext<MemoryGameDbContext>(options =>

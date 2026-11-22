@@ -57,6 +57,10 @@ export class GameApiService implements IGameApiClient {
     return this.http.delete(`${this.apiUrl}/GameSessions/${id}`);
   }
 
+  getAllPlayers(): Observable<IPlayer[]> {
+    return this.http.get<IPlayer[]>(`${this.apiUrl}/Players`);
+  }
+
   getPlayerById(id: number): Observable<IPlayer> {
     return this.http.get<IPlayer>(`${this.apiUrl}/Players/${id}`);
   }
@@ -70,5 +74,9 @@ export class GameApiService implements IGameApiClient {
 
   registerPlayer(player: Partial<IPlayer>): Observable<IPlayer> {
     return this.http.post<IPlayer>(`${this.apiUrl}/Players`, player);
+  }
+
+  deletePlayer(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/Players/${id}`);
   }
 }

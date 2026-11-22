@@ -47,6 +47,9 @@ namespace MemoryGameApi.Controllers
         public IActionResult AddSession([FromBody] GameSession session)
         {
             var created = _sessionService.AddSession(session);
+            if (created == null)
+                return NotFound(new { code = "ACCOUNT_NOT_FOUND", message = "الحساب غير موجود، يرجى إنشاء حساب جديد." });
+
             return Ok(created);
         }
 
