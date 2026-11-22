@@ -96,6 +96,11 @@
         try { localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); } catch {}
       }
 
+      function stripPassword(player) {
+        const { password, ...safePlayer } = player;
+        return safePlayer;
+      }
+
       function hydratePlayer(db, player) {
         const profile = db.profiles.find(pr => pr.playerId === player.playerId) || null;
         const gameSessions = db.sessions.filter(s => s.playerId === player.playerId);
@@ -106,7 +111,7 @@
             ...pa,
             achievement: db.achievements.find(a => a.achievementId === pa.achievementId) || null
           }));
-        return { ...player, profile, gameSessions, playerAchievements };
+        return { ...stripPassword(player), profile, gameSessions, playerAchievements };
       }
 
       function hydrateSessions(db) {
@@ -114,9 +119,17 @@
           .map(s => {
             const p = db.players.find(pl => pl.playerId === s.playerId);
             const pr = p ? db.profiles.find(x => x.playerId === p.playerId) : null;
-            return { ...s, player: p ? { ...p, profile: pr } : null };
+            return { ...s, player: p ? { ...stripPassword(p), profile: pr } : null };
           })
           .sort((a, b) => b.score - a.score || a.timeElapsedSeconds - b.timeElapsedSeconds);
+      }
+
+      function recalcProfile(db, playerId) {
+        const pr = db.profiles.find(x => x.playerId === playerId);
+        if (!pr) return;
+        const remaining = db.sessions.filter(s => s.playerId === playerId);
+        pr.totalGamesPlayed = remaining.length;
+        pr.highestScore = remaining.length > 0 ? Math.max(...remaining.map(s => s.score)) : 0;
       }
 
       function jsonResponse(data, status = 200) {
@@ -149,12 +162,12 @@
           return jsonResponse([...db.cards].sort((a, b) => a.cardId - b.cardId));
         }
         if (path === '/api/Cards' && method === 'POST') {
-          const nextId = db.cards.reduce((m, c) => Math.max(m, c.cardId), 0) + 1;
+          const nextId = db.cards.reduce((mx, c) => Math.max(mx, c.cardId), 0) + 1;
           const created = {
             cardId: nextId,
-            title: body?.title || 'بطاقة جديدة',
-            icon: body?.icon || '🌟',
-            category: body?.category || 'عام',
+            title: (body?.title || 'بطاقة جديدة').trim(),
+            icon: (body?.icon || '🌟').trim(),
+            category: (body?.category || 'عام').trim(),
             accentColor: body?.accentColor || '#6366f1',
             levelDifficulty: Number(body?.levelDifficulty) || 1,
             isActive: body?.isActive !== false
@@ -166,7 +179,7 @@
         let m;
         if ((m = path.match(/^\/api\/Cards\/level\/(\d+)$/)) && method === 'GET') {
           const level = Number(m[1]);
-          if (level < 1 || level > 2) return jsonResponse('Level must be 1 or 2', 400);
+          if (level < 1 || level > 2) return jsonResponse('Level must be 1 or 2', 404);
           const req = level === 1 ? 6 : 10;
           let active = db.cards.filter(c => c.isActive && c.levelDifficulty <= level).sort((a, b) => a.cardId - b.cardId).slice(0, req);
           if (active.length < req) active = db.cards.filter(c => c.isActive).sort((a, b) => a.cardId - b.cardId).slice(0, req);
@@ -221,9 +234,12 @@
           return jsonResponse(list.slice((pageIndex - 1) * pageSize, pageIndex * pageSize));
         }
         if (path === '/api/GameSessions' && method === 'POST') {
+          const player = db.players.find(p => p.playerId === Number(body?.playerId));
+          if (!player) {
+            return jsonResponse({ code: 'ACCOUNT_NOT_FOUND', message: 'الحساب غير موجود، يرجى إنشاء حساب جديد.' }, 404);
+          }
           const nextId = db.sessions.reduce((mx, s) => Math.max(mx, s.sessionId || 0), 0) + 1;
           const level = Number(body?.level) || 1;
-          const player = db.players.find(p => p.playerId === Number(body?.playerId)) || db.players[0];
           const created = {
             sessionId: nextId,
             level,
@@ -233,18 +249,33 @@
             score: Number(body?.score) || 900,
             isCompleted: body?.isCompleted !== false,
             playedAt: new Date().toISOString(),
-            playerId: player ? player.playerId : 1
+            playerId: player.playerId
           };
           db.sessions.push(created);
-          if (player) {
-            const pr = db.profiles.find(x => x.playerId === player.playerId);
-            if (pr) {
-              pr.totalGamesPlayed += 1;
-              if (created.score > pr.highestScore) pr.highestScore = created.score;
-            }
+          const pr = db.profiles.find(x => x.playerId === player.playerId);
+          if (pr) {
+            pr.totalGamesPlayed += 1;
+            if (created.score > pr.highestScore) pr.highestScore = created.score;
           }
+          const existingAch = db.playerAchievements.filter(pa => pa.playerId === player.playerId);
+          const unlock = (achId) => {
+            if (!existingAch.some(pa => pa.achievementId === achId)) {
+              const entry = {
+                playerId: player.playerId,
+                achievementId: achId,
+                unlockedAt: new Date().toISOString(),
+                displayOrder: existingAch.length + 1
+              };
+              db.playerAchievements.push(entry);
+              existingAch.push(entry);
+            }
+          };
+          if (created.level === 1 && created.attempts <= 10) unlock(1);
+          if (created.timeElapsedSeconds <= 35) unlock(2);
+          if (created.level === 2 && created.isCompleted) unlock(3);
+
           saveDb(db);
-          return jsonResponse({ ...created, player: player ? hydratePlayer(db, player) : null });
+          return jsonResponse({ ...created, player: hydratePlayer(db, player) });
         }
         if ((m = path.match(/^\/api\/GameSessions\/(\d+)$/))) {
           const id = Number(m[1]);
@@ -253,17 +284,21 @@
             if (idx === -1) return jsonResponse('No Session was found', 404);
             const s = db.sessions[idx];
             const p = db.players.find(x => x.playerId === s.playerId) || null;
-            return jsonResponse({ ...s, player: p });
+            return jsonResponse({ ...s, player: p ? stripPassword(p) : null });
           }
           if (method === 'PUT') {
             if (idx === -1) return jsonResponse('No Session was found', 404);
-            db.sessions[idx] = { ...db.sessions[idx], ...body, sessionId: id };
+            const existing = db.sessions[idx];
+            db.sessions[idx] = { ...existing, ...body, sessionId: id, playerId: existing.playerId };
+            recalcProfile(db, existing.playerId);
             saveDb(db);
             return jsonResponse(db.sessions[idx]);
           }
           if (method === 'DELETE') {
             if (idx === -1) return jsonResponse('No Session was found', 404);
+            const playerId = db.sessions[idx].playerId;
             db.sessions.splice(idx, 1);
+            recalcProfile(db, playerId);
             saveDb(db);
             return jsonResponse({ message: 'Session Deleted Successfully' });
           }
@@ -276,8 +311,17 @@
         if (path === '/api/Players/login' && method === 'GET') {
           const email = (url.searchParams.get('email') || '').trim().toLowerCase();
           const password = url.searchParams.get('password') || '';
-          const p = db.players.find(x => x.email.toLowerCase() === email && x.password === password);
-          return p ? jsonResponse(hydratePlayer(db, p)) : jsonResponse('Invalid email or password', 404);
+          if (!email || !password) {
+            return jsonResponse({ code: 'MISSING_CREDENTIALS', message: 'الرجاء إدخال البريد الإلكتروني وكلمة المرور' }, 400);
+          }
+          const p = db.players.find(x => x.email.toLowerCase() === email);
+          if (!p) {
+            return jsonResponse({ code: 'ACCOUNT_NOT_FOUND', message: 'لا يوجد حساب مسجّل بهذا البريد الإلكتروني، يجب عليك إنشاء حساب جديد أولاً.' }, 404);
+          }
+          if (p.password !== password) {
+            return jsonResponse({ code: 'INVALID_PASSWORD', message: 'كلمة المرور غير صحيحة' }, 401);
+          }
+          return jsonResponse(hydratePlayer(db, p));
         }
         if ((m = path.match(/^\/api\/Players\/search\/(.+)$/)) && method === 'GET') {
           const kw = decodeURIComponent(m[1]).toLowerCase();
@@ -287,21 +331,30 @@
           return jsonResponse(matched);
         }
         if (path === '/api/Players' && method === 'POST') {
+          const email = (body?.email || '').trim();
+          const username = (body?.username || '').trim();
+          const password = body?.password || '';
+          if (!email || !username || !password) {
+            return jsonResponse({ code: 'MISSING_FIELDS', message: 'الرجاء تعبئة الاسم والبريد الإلكتروني وكلمة المرور' }, 400);
+          }
+          if (db.players.some(p => p.email.toLowerCase() === email.toLowerCase())) {
+            return jsonResponse({ code: 'EMAIL_EXISTS', message: 'هذا البريد الإلكتروني مسجّل مسبقاً' }, 409);
+          }
           const nextPId = db.players.reduce((mx, p) => Math.max(mx, p.playerId), 0) + 1;
           const nextPrId = db.profiles.reduce((mx, pr) => Math.max(mx, pr.profileId), 0) + 1;
           const created = {
             playerId: nextPId,
-            username: body?.username || 'لاعبة جديدة',
-            email: body?.email || `player${nextPId}@memorygame.sa`,
-            password: body?.password || '123456',
-            role: body?.role || 'Player',
+            username,
+            email,
+            password,
+            role: 'Player',
             createdAt: new Date().toISOString()
           };
           const profile = {
             profileId: nextPrId,
             playerId: nextPId,
-            avatarEmoji: body?.profile?.avatarEmoji || '👤',
-            preferredTheme: body?.profile?.preferredTheme || 'Default',
+            avatarEmoji: (body?.profile?.avatarEmoji || '👤').trim(),
+            preferredTheme: (body?.profile?.preferredTheme || 'Default').trim(),
             highestScore: 0,
             totalGamesPlayed: 0
           };
@@ -318,15 +371,34 @@
           }
           if (method === 'PUT') {
             if (idx === -1) return jsonResponse('No Player was found', 404);
-            db.players[idx] = { ...db.players[idx], ...body, playerId: id };
+            const email = (body?.email || db.players[idx].email).trim();
+            if (db.players.some(p => p.playerId !== id && p.email.toLowerCase() === email.toLowerCase())) {
+              return jsonResponse({ code: 'EMAIL_EXISTS', message: 'هذا البريد الإلكتروني مستخدم لحساب آخر' }, 409);
+            }
+            const existing = db.players[idx];
+            db.players[idx] = {
+              ...existing,
+              username: (body?.username || existing.username).trim(),
+              email,
+              password: body?.password ? body.password : existing.password,
+              role: existing.role === 'Admin' ? 'Admin' : (body?.role || existing.role)
+            };
             saveDb(db);
             return jsonResponse(hydratePlayer(db, db.players[idx]));
           }
           if (method === 'DELETE') {
-            if (idx === -1) return jsonResponse('No Player was found', 404);
+            if (idx === -1) {
+              return jsonResponse({ code: 'ACCOUNT_NOT_FOUND', message: 'لم يتم العثور على الحساب' }, 404);
+            }
+            if ((db.players[idx].role || '').toLowerCase() === 'admin') {
+              return jsonResponse({ code: 'CANNOT_DELETE_ADMIN', message: 'لا يمكن حذف حساب المشرف' }, 400);
+            }
             db.players.splice(idx, 1);
+            db.profiles = db.profiles.filter(pr => pr.playerId !== id);
+            db.sessions = db.sessions.filter(s => s.playerId !== id);
+            db.playerAchievements = db.playerAchievements.filter(pa => pa.playerId !== id);
             saveDb(db);
-            return jsonResponse({ message: 'Player Deleted Successfully' });
+            return jsonResponse({ message: 'تم حذف حساب اللاعب وجميع بياناته نهائياً من قاعدة البيانات' });
           }
         }
 

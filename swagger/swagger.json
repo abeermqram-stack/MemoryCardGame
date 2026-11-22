@@ -2,19 +2,14 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MemoryGameApi",
-    "version": "1.0",
-    "description": "ASP.NET Core Web API (.NET 8) + EF Core Code-First — لعبة بطاقات الذاكرة (Memory Card Game)"
+    "version": "1.0"
   },
-  "servers": [
-    {
-      "url": "/MemoryCardGame"
-    }
-  ],
   "paths": {
     "/api/Cards": {
       "get": {
-        "tags": ["Cards"],
-        "summary": "Get all cards",
+        "tags": [
+          "Cards"
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -22,437 +17,842 @@
         }
       },
       "post": {
-        "tags": ["Cards"],
-        "summary": "Add a new card",
+        "tags": [
+          "Cards"
+        ],
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/CardItem" }
+              "schema": {
+                "$ref": "#/components/schemas/CardItem"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CardItem"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CardItem"
+              }
             }
           }
         },
         "responses": {
-          "200": { "description": "OK" }
+          "200": {
+            "description": "OK"
+          }
         }
       }
     },
     "/api/Cards/level/{level}": {
       "get": {
-        "tags": ["Cards"],
-        "summary": "Get active cards by level (1 = 6 pairs, 2 = 10 pairs)",
+        "tags": [
+          "Cards"
+        ],
         "parameters": [
           {
             "name": "level",
             "in": "path",
             "required": true,
-            "schema": { "type": "integer", "format": "int32", "minimum": 1, "maximum": 2, "default": 1 }
+            "schema": {
+              "maximum": 2,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
           }
         ],
         "responses": {
-          "200": { "description": "OK" }
+          "200": {
+            "description": "OK"
+          }
         }
       }
     },
     "/api/Cards/search": {
       "get": {
-        "tags": ["Cards"],
-        "summary": "Search cards by title or category",
+        "tags": [
+          "Cards"
+        ],
         "parameters": [
           {
             "name": "keyword",
             "in": "query",
-            "required": true,
-            "schema": { "type": "string", "example": "الفضاء" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
-          "200": { "description": "OK" },
-          "400": { "description": "Bad Request" }
+          "200": {
+            "description": "OK"
+          }
         }
       }
     },
     "/api/Cards/{id}": {
       "get": {
-        "tags": ["Cards"],
-        "summary": "Get card by ID",
+        "tags": [
+          "Cards"
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "integer", "format": "int32", "minimum": 1, "default": 1 }
+            "schema": {
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
           }
         ],
         "responses": {
-          "200": { "description": "OK" },
-          "404": { "description": "Not Found" }
+          "200": {
+            "description": "OK"
+          }
         }
       },
       "put": {
-        "tags": ["Cards"],
-        "summary": "Update card by ID",
+        "tags": [
+          "Cards"
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "integer", "format": "int32", "minimum": 1, "default": 1 }
+            "schema": {
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
           }
         ],
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/CardItem" }
+              "schema": {
+                "$ref": "#/components/schemas/CardItem"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CardItem"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CardItem"
+              }
             }
           }
         },
         "responses": {
-          "200": { "description": "OK" },
-          "404": { "description": "Not Found" }
+          "200": {
+            "description": "OK"
+          }
         }
       },
       "delete": {
-        "tags": ["Cards"],
-        "summary": "Delete card by ID",
+        "tags": [
+          "Cards"
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "integer", "format": "int32", "minimum": 1 }
+            "schema": {
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
           }
         ],
         "responses": {
-          "200": { "description": "OK" },
-          "404": { "description": "Not Found" }
+          "200": {
+            "description": "OK"
+          }
         }
       }
     },
     "/api/Cards/{id}/update-title": {
       "put": {
-        "tags": ["Cards"],
-        "summary": "Update only card title using UpdateCardTitleDto",
+        "tags": [
+          "Cards"
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "integer", "format": "int32", "minimum": 1, "default": 1 }
+            "schema": {
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
           }
         ],
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/UpdateCardTitleDto" }
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCardTitleDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCardTitleDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCardTitleDto"
+              }
             }
           }
         },
         "responses": {
-          "200": { "description": "OK" },
-          "400": { "description": "Bad Request" },
-          "404": { "description": "Not Found" }
+          "200": {
+            "description": "OK"
+          }
         }
       }
     },
     "/api/GameSessions": {
       "get": {
-        "tags": ["GameSessions"],
-        "summary": "Get all game sessions ordered by score",
+        "tags": [
+          "GameSessions"
+        ],
         "responses": {
-          "200": { "description": "OK" }
+          "200": {
+            "description": "OK"
+          }
         }
       },
       "post": {
-        "tags": ["GameSessions"],
-        "summary": "Add a completed game session (updates profile stats & unlocks achievements)",
+        "tags": [
+          "GameSessions"
+        ],
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/GameSession" }
+              "schema": {
+                "$ref": "#/components/schemas/GameSession"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GameSession"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GameSession"
+              }
             }
           }
         },
         "responses": {
-          "200": { "description": "OK" }
+          "200": {
+            "description": "OK"
+          }
         }
       }
     },
     "/api/GameSessions/paged": {
       "get": {
-        "tags": ["GameSessions"],
-        "summary": "Get paged game sessions with optional level filter",
+        "tags": [
+          "GameSessions"
+        ],
         "parameters": [
           {
             "name": "pageIndex",
             "in": "query",
-            "schema": { "type": "integer", "format": "int32", "default": 1 }
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
           },
           {
             "name": "pageSize",
             "in": "query",
-            "schema": { "type": "integer", "format": "int32", "default": 10 }
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
           },
           {
             "name": "level",
             "in": "query",
-            "schema": { "type": "integer", "format": "int32", "nullable": true }
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
           }
         ],
         "responses": {
-          "200": { "description": "OK" },
-          "400": { "description": "Bad Request" }
+          "200": {
+            "description": "OK"
+          }
         }
       }
     },
     "/api/GameSessions/{id}": {
       "get": {
-        "tags": ["GameSessions"],
-        "summary": "Get game session by ID",
+        "tags": [
+          "GameSessions"
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "integer", "format": "int32", "minimum": 1, "default": 1 }
+            "schema": {
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
           }
         ],
         "responses": {
-          "200": { "description": "OK" },
-          "404": { "description": "Not Found" }
+          "200": {
+            "description": "OK"
+          }
         }
       },
       "put": {
-        "tags": ["GameSessions"],
-        "summary": "Update game session by ID",
+        "tags": [
+          "GameSessions"
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "integer", "format": "int32", "minimum": 1, "default": 1 }
+            "schema": {
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
           }
         ],
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/GameSession" }
+              "schema": {
+                "$ref": "#/components/schemas/GameSession"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GameSession"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GameSession"
+              }
             }
           }
         },
         "responses": {
-          "200": { "description": "OK" },
-          "404": { "description": "Not Found" }
+          "200": {
+            "description": "OK"
+          }
         }
       },
       "delete": {
-        "tags": ["GameSessions"],
-        "summary": "Delete game session by ID",
+        "tags": [
+          "GameSessions"
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "integer", "format": "int32", "minimum": 1 }
+            "schema": {
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
           }
         ],
         "responses": {
-          "200": { "description": "OK" },
-          "404": { "description": "Not Found" }
+          "200": {
+            "description": "OK"
+          }
         }
       }
     },
     "/api/Players": {
       "get": {
-        "tags": ["Players"],
-        "summary": "Get all players with Profile (1:1), GameSessions (1:N), and Achievements (N:M)",
+        "tags": [
+          "Players"
+        ],
         "responses": {
-          "200": { "description": "OK" }
+          "200": {
+            "description": "OK"
+          }
         }
       },
       "post": {
-        "tags": ["Players"],
-        "summary": "Register a new player",
+        "tags": [
+          "Players"
+        ],
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/Player" }
+              "schema": {
+                "$ref": "#/components/schemas/Player"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Player"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Player"
+              }
             }
           }
         },
         "responses": {
-          "200": { "description": "OK" }
+          "200": {
+            "description": "OK"
+          }
         }
       }
     },
     "/api/Players/{id}": {
       "get": {
-        "tags": ["Players"],
-        "summary": "Get player by ID with all relationships",
+        "tags": [
+          "Players"
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "integer", "format": "int32", "minimum": 1, "default": 1 }
+            "schema": {
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
           }
         ],
         "responses": {
-          "200": { "description": "OK" },
-          "404": { "description": "Not Found" }
+          "200": {
+            "description": "OK"
+          }
         }
       },
       "put": {
-        "tags": ["Players"],
-        "summary": "Update player by ID",
+        "tags": [
+          "Players"
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "integer", "format": "int32", "minimum": 1, "default": 2 }
+            "schema": {
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
           }
         ],
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/Player" }
+              "schema": {
+                "$ref": "#/components/schemas/Player"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Player"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Player"
+              }
             }
           }
         },
         "responses": {
-          "200": { "description": "OK" },
-          "404": { "description": "Not Found" }
+          "200": {
+            "description": "OK"
+          }
         }
       },
       "delete": {
-        "tags": ["Players"],
-        "summary": "Delete player by ID",
+        "tags": [
+          "Players"
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "integer", "format": "int32", "minimum": 1 }
+            "schema": {
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
           }
         ],
         "responses": {
-          "200": { "description": "OK" },
-          "404": { "description": "Not Found" }
+          "200": {
+            "description": "OK"
+          }
         }
       }
     },
     "/api/Players/login": {
       "get": {
-        "tags": ["Players"],
-        "summary": "Login player or admin with email & password",
+        "tags": [
+          "Players"
+        ],
         "parameters": [
           {
             "name": "email",
             "in": "query",
-            "required": true,
-            "schema": { "type": "string", "example": "asia@memorygame.sa" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "password",
             "in": "query",
-            "required": true,
-            "schema": { "type": "string", "example": "123456" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
-          "200": { "description": "OK" },
-          "404": { "description": "Not Found" }
+          "200": {
+            "description": "OK"
+          }
         }
       }
     },
     "/api/Players/search/{keyword}": {
       "get": {
-        "tags": ["Players"],
-        "summary": "Search players by name or email",
+        "tags": [
+          "Players"
+        ],
         "parameters": [
           {
             "name": "keyword",
             "in": "path",
             "required": true,
-            "schema": { "type": "string", "example": "asia" }
+            "schema": {
+              "pattern": "^[A-Za-z]*$",
+              "type": "string"
+            }
           }
         ],
         "responses": {
-          "200": { "description": "OK" }
+          "200": {
+            "description": "OK"
+          }
         }
       }
     }
   },
   "components": {
     "schemas": {
-      "CardItem": {
+      "Achievement": {
+        "required": [
+          "badgeIcon",
+          "description",
+          "title"
+        ],
         "type": "object",
-        "required": ["title", "icon", "category", "accentColor"],
         "properties": {
-          "cardId": { "type": "integer", "format": "int32", "example": 0 },
-          "title": { "type": "string", "maxLength": 80, "example": "قمر فضي" },
-          "icon": { "type": "string", "maxLength": 150, "example": "🌙" },
-          "category": { "type": "string", "maxLength": 60, "example": "الفضاء" },
-          "accentColor": { "type": "string", "maxLength": 30, "example": "#6366f1" },
-          "levelDifficulty": { "type": "integer", "format": "int32", "minimum": 1, "maximum": 2, "example": 1 },
-          "isActive": { "type": "boolean", "example": true }
-        }
+          "achievementId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "title": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string"
+          },
+          "description": {
+            "maxLength": 250,
+            "minLength": 1,
+            "type": "string"
+          },
+          "badgeIcon": {
+            "maxLength": 20,
+            "minLength": 1,
+            "type": "string"
+          },
+          "bonusPoints": {
+            "maximum": 5000,
+            "minimum": 10,
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
       },
-      "UpdateCardTitleDto": {
+      "CardItem": {
+        "required": [
+          "accentColor",
+          "category",
+          "icon",
+          "title"
+        ],
         "type": "object",
-        "required": ["title"],
         "properties": {
-          "title": { "type": "string", "maxLength": 80, "example": "صاروخ المستقبل" }
-        }
+          "cardId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "title": {
+            "maxLength": 80,
+            "minLength": 1,
+            "type": "string"
+          },
+          "icon": {
+            "maxLength": 150,
+            "minLength": 1,
+            "type": "string"
+          },
+          "category": {
+            "maxLength": 60,
+            "minLength": 1,
+            "type": "string"
+          },
+          "accentColor": {
+            "maxLength": 30,
+            "minLength": 1,
+            "type": "string"
+          },
+          "levelDifficulty": {
+            "maximum": 2,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
       },
       "GameSession": {
+        "required": [
+          "attempts",
+          "level",
+          "pairsCount",
+          "playerId",
+          "score",
+          "timeElapsedSeconds"
+        ],
         "type": "object",
-        "required": ["level", "pairsCount", "attempts", "timeElapsedSeconds", "score", "playerId"],
         "properties": {
-          "sessionId": { "type": "integer", "format": "int32", "example": 0 },
-          "level": { "type": "integer", "format": "int32", "minimum": 1, "maximum": 2, "example": 1 },
-          "pairsCount": { "type": "integer", "format": "int32", "minimum": 6, "maximum": 10, "example": 6 },
-          "attempts": { "type": "integer", "format": "int32", "minimum": 1, "maximum": 1000, "example": 8 },
-          "timeElapsedSeconds": { "type": "integer", "format": "int32", "minimum": 1, "maximum": 7200, "example": 25 },
-          "score": { "type": "integer", "format": "int32", "minimum": 0, "maximum": 100000, "example": 950 },
-          "isCompleted": { "type": "boolean", "example": true },
-          "playedAt": { "type": "string", "format": "date-time" },
-          "playerId": { "type": "integer", "format": "int32", "example": 2 }
-        }
+          "sessionId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "level": {
+            "maximum": 2,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "pairsCount": {
+            "maximum": 10,
+            "minimum": 6,
+            "type": "integer",
+            "format": "int32"
+          },
+          "attempts": {
+            "maximum": 1000,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "timeElapsedSeconds": {
+            "maximum": 7200,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "score": {
+            "maximum": 100000,
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32"
+          },
+          "isCompleted": {
+            "type": "boolean"
+          },
+          "playedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "playerId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "player": {
+            "$ref": "#/components/schemas/Player"
+          }
+        },
+        "additionalProperties": false
       },
       "Player": {
+        "required": [
+          "email",
+          "password",
+          "role",
+          "username"
+        ],
         "type": "object",
-        "required": ["username", "email", "password", "role"],
         "properties": {
-          "playerId": { "type": "integer", "format": "int32", "example": 0 },
-          "username": { "type": "string", "maxLength": 100, "example": "لاعبة جديدة" },
-          "email": { "type": "string", "format": "email", "maxLength": 150, "example": "newplayer@memorygame.sa" },
-          "password": { "type": "string", "maxLength": 100, "example": "123456" },
-          "role": { "type": "string", "maxLength": 30, "example": "Player" },
-          "createdAt": { "type": "string", "format": "date-time" },
-          "profile": { "$ref": "#/components/schemas/PlayerProfile" }
-        }
+          "playerId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "username": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string"
+          },
+          "email": {
+            "maxLength": 150,
+            "minLength": 1,
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string"
+          },
+          "role": {
+            "maxLength": 30,
+            "minLength": 1,
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "profile": {
+            "$ref": "#/components/schemas/PlayerProfile"
+          },
+          "gameSessions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GameSession"
+            },
+            "nullable": true
+          },
+          "playerAchievements": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlayerAchievement"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PlayerAchievement": {
+        "type": "object",
+        "properties": {
+          "playerId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "achievementId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "achievement": {
+            "$ref": "#/components/schemas/Achievement"
+          },
+          "unlockedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "displayOrder": {
+            "maximum": 100,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
       },
       "PlayerProfile": {
+        "required": [
+          "avatarEmoji",
+          "preferredTheme"
+        ],
         "type": "object",
         "properties": {
-          "profileId": { "type": "integer", "format": "int32" },
-          "avatarEmoji": { "type": "string", "maxLength": 20, "example": "🎮" },
-          "preferredTheme": { "type": "string", "maxLength": 50, "example": "Neon Space" },
-          "highestScore": { "type": "integer", "format": "int32" },
-          "totalGamesPlayed": { "type": "integer", "format": "int32" },
-          "playerId": { "type": "integer", "format": "int32" }
-        }
+          "profileId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "avatarEmoji": {
+            "maxLength": 20,
+            "minLength": 1,
+            "type": "string"
+          },
+          "preferredTheme": {
+            "maxLength": 50,
+            "minLength": 1,
+            "type": "string"
+          },
+          "highestScore": {
+            "maximum": 100000,
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalGamesPlayed": {
+            "maximum": 10000,
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32"
+          },
+          "playerId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
       },
-      "Achievement": {
+      "UpdateCardTitleDto": {
+        "required": [
+          "title"
+        ],
         "type": "object",
         "properties": {
-          "achievementId": { "type": "integer", "format": "int32" },
-          "title": { "type": "string", "maxLength": 100 },
-          "description": { "type": "string", "maxLength": 250 },
-          "badgeIcon": { "type": "string", "maxLength": 20 },
-          "bonusPoints": { "type": "integer", "format": "int32" }
-        }
+          "title": {
+            "maxLength": 80,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
       }
     }
   }
