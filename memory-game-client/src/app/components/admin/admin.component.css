@@ -1,17 +1,102 @@
+.feedback-toast {
+  position: sticky;
+  top: 1rem;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 14px;
+  margin-bottom: 1rem;
+  font-size: 0.92rem;
+  font-weight: 700;
+  box-shadow: 0 6px 18px rgba(46, 30, 23, 0.16);
+}
+
+.toast-success {
+  background-color: #dff3e4;
+  border: 2px solid #2b6e3f;
+  color: #1b4d2b;
+}
+
+.toast-error {
+  background-color: #fde8e4;
+  border: 2px solid #964f37;
+  color: #6b2615;
+}
+
+.toast-info {
+  background-color: #e6d7be;
+  border: 2px solid #593426;
+  color: #2e1e17;
+}
+
+.toast-close {
+  background: transparent;
+  border: none;
+  color: inherit;
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 0.25rem;
+}
+
+.card-editor-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.65rem;
+  margin-bottom: 1rem;
+}
+
+.editor-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1 1 170px;
+}
+
+.editor-field.medium-field {
+  flex: 0 1 140px;
+}
+
+.editor-field.small-field {
+  flex: 0 1 125px;
+}
+
+.editor-field label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #593426;
+}
+
+.editor-field input,
+.editor-field select {
+  background-color: #f9f6f0;
+  border: 1.5px solid #8c583a;
+  color: #2e1e17;
+  padding: 0.45rem 0.7rem;
+  border-radius: 10px;
+  width: 100%;
+}
+
+.editor-field input:focus,
+.editor-field select:focus {
+  outline: none;
+  border-color: #2e1e17;
+}
+
+.editor-actions {
+  display: flex;
+  gap: 0.45rem;
+  align-items: center;
+}
+
 .search-bar {
   padding-top: 0.5rem;
   border-top: 1px dashed #c49a6c;
-}
-
-.status-text {
-  color: #593426;
-  background-color: #e6d7be;
-  border: 1px solid #8c583a;
-  border-radius: 10px;
-  padding: 0.5rem 0.75rem;
-  font-size: 0.86rem;
-  font-weight: 700;
-  margin-bottom: 0.75rem;
 }
 
 .empty-cell {

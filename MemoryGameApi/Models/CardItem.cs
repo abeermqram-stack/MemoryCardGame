@@ -29,6 +29,9 @@ namespace MemoryGameApi.Models
         [Range(1, 2, ErrorMessage = "Level must be 1 (6 pairs) or 2 (10 pairs)")]
         public int LevelDifficulty { get; set; } = 1;
 
+        [Range(10, 1000, ErrorMessage = "Card points must be between 10 and 1000")]
+        public int Points { get; set; } = 100;
+
         public bool IsActive { get; set; } = true;
     }
 }

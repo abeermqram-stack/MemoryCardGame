@@ -22,6 +22,7 @@ export class PlayerComponent implements OnInit {
   playerRegEmail: string = '';
   playerRegPassword: string = '';
   playerAuthMessage: string = '';
+  playerFeedbackMessage: string = '';
   showCreateAccountHint: boolean = false;
 
   sessions: IGameSession[] = [];
@@ -63,6 +64,7 @@ export class PlayerComponent implements OnInit {
 
   loginAsPlayer(): void {
     this.playerAuthMessage = '';
+    this.playerFeedbackMessage = '';
     this.showCreateAccountHint = false;
     if (!this.playerLoginEmail.trim() || !this.playerLoginPassword.trim()) {
       this.playerAuthMessage = 'الرجاء إدخال البريد الإلكتروني وكلمة المرور';
@@ -75,6 +77,7 @@ export class PlayerComponent implements OnInit {
         this.playerLoginEmail = '';
         this.playerLoginPassword = '';
         this.showCreateAccountHint = false;
+        this.playerFeedbackMessage = `تم تسجيل الدخول بنجاح! مرحباً بكِ ${player.username}.`;
         this.loadSessions();
       },
       error: err => {
@@ -125,6 +128,7 @@ export class PlayerComponent implements OnInit {
         this.playerRegName = '';
         this.playerRegEmail = '';
         this.playerRegPassword = '';
+        this.playerFeedbackMessage = `تم إنشاء حسابكِ بنجاح! أهلاً بكِ ${created.username}.`;
         this.loadSessions();
       },
       error: err => {
@@ -144,6 +148,7 @@ export class PlayerComponent implements OnInit {
     this.playerLoginEmail = '';
     this.playerLoginPassword = '';
     this.playerAuthMessage = '';
+    this.playerFeedbackMessage = 'تم تسجيل الخروج بنجاح.';
     this.showCreateAccountHint = false;
   }
 }

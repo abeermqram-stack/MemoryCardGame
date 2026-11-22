@@ -52,6 +52,7 @@ namespace MemoryGameApi.Services
             card.Title = (card.Title ?? string.Empty).Trim();
             card.Icon = (card.Icon ?? string.Empty).Trim();
             card.Category = string.IsNullOrWhiteSpace(card.Category) ? "عام" : card.Category.Trim();
+            card.Points = card.Points >= 10 && card.Points <= 1000 ? card.Points : 100;
             _dbContext.CardItems.Add(card);
             _dbContext.SaveChanges();
             return card;
@@ -63,11 +64,12 @@ namespace MemoryGameApi.Services
             if (existing == null)
                 return false;
 
-            existing.Title = updatedCard.Title;
-            existing.Icon = updatedCard.Icon;
-            existing.Category = updatedCard.Category;
+            existing.Title = (updatedCard.Title ?? existing.Title).Trim();
+            existing.Icon = (updatedCard.Icon ?? existing.Icon).Trim();
+            existing.Category = string.IsNullOrWhiteSpace(updatedCard.Category) ? existing.Category : updatedCard.Category.Trim();
             existing.AccentColor = updatedCard.AccentColor;
             existing.LevelDifficulty = updatedCard.LevelDifficulty;
+            existing.Points = updatedCard.Points >= 10 && updatedCard.Points <= 1000 ? updatedCard.Points : existing.Points;
             existing.IsActive = updatedCard.IsActive;
 
             _dbContext.SaveChanges();

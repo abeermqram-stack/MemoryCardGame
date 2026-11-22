@@ -1,4 +1,9 @@
 <main class="container">
+  <div class="player-feedback-banner" *ngIf="playerFeedbackMessage" role="status">
+    <span>{{ playerFeedbackMessage }}</span>
+    <button type="button" class="banner-close" (click)="playerFeedbackMessage = ''" aria-label="إغلاق">×</button>
+  </div>
+
   <section class="card-box auth-card-box" *ngIf="!loggedInPlayer">
     <div class="choice-tabs">
       <button

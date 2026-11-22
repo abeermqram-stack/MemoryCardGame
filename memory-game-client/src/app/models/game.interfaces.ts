@@ -7,6 +7,7 @@ export interface ICardItem {
   category: string;
   accentColor: string;
   levelDifficulty: number;
+  points: number;
   isActive: boolean;
 }
 
@@ -17,6 +18,7 @@ export interface IBoardCard {
   icon: string;
   category: string;
   accentColor: string;
+  points: number;
   isFlipped: boolean;
   isMatched: boolean;
 }
@@ -74,7 +76,7 @@ export interface IGameSession {
 export interface IGameEngineService {
   buildBoardDeck(cards: ICardItem[], level: number): IBoardCard[];
   areCardsMatching(firstCard: IBoardCard, secondCard: IBoardCard): boolean;
-  calculateScore(level: number, attempts: number, timeElapsedSeconds: number): number;
+  calculateScore(level: number, attempts: number, timeElapsedSeconds: number, matchedCardPoints?: number): number;
 }
 
 export interface IGameApiClient {

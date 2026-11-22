@@ -76,16 +76,16 @@ namespace MemoryGameApi.Data
             var seedDate = new DateTime(2026, 11, 1, 12, 0, 0, DateTimeKind.Utc);
 
             modelBuilder.Entity<CardItem>().HasData(
-                new CardItem { CardId = 1, Title = "صاروخ الفضاء", Icon = "🚀", Category = "الفضاء", AccentColor = "#6366f1", LevelDifficulty = 1, IsActive = true },
-                new CardItem { CardId = 2, Title = "كوكب زحل", Icon = "🪐", Category = "الفضاء", AccentColor = "#8b5cf6", LevelDifficulty = 1, IsActive = true },
-                new CardItem { CardId = 3, Title = "الجوهرة الماسية", Icon = "💎", Category = "كنوز", AccentColor = "#06b6d4", LevelDifficulty = 1, IsActive = true },
-                new CardItem { CardId = 4, Title = "التاج الملكي", Icon = "👑", Category = "كنوز", AccentColor = "#f59e0b", LevelDifficulty = 1, IsActive = true },
-                new CardItem { CardId = 5, Title = "الصاعقة الذهبية", Icon = "⚡", Category = "طاقة", AccentColor = "#eab308", LevelDifficulty = 1, IsActive = true },
-                new CardItem { CardId = 6, Title = "النجمة المضيئة", Icon = "🌟", Category = "الفضاء", AccentColor = "#ec4899", LevelDifficulty = 1, IsActive = true },
-                new CardItem { CardId = 7, Title = "التنين الناري", Icon = "🐉", Category = "أساطير", AccentColor = "#ef4444", LevelDifficulty = 2, IsActive = true },
-                new CardItem { CardId = 8, Title = "الكريستال السحري", Icon = "🔮", Category = "أساطير", AccentColor = "#a855f7", LevelDifficulty = 2, IsActive = true },
-                new CardItem { CardId = 9, Title = "درع الفرسان", Icon = "🛡️", Category = "مغامرة", AccentColor = "#10b981", LevelDifficulty = 2, IsActive = true },
-                new CardItem { CardId = 10, Title = "المفتاح الذهبي", Icon = "🗝️", Category = "كنوز", AccentColor = "#f97316", LevelDifficulty = 2, IsActive = true }
+                new CardItem { CardId = 1, Title = "صاروخ الفضاء", Icon = "🚀", Category = "الفضاء", AccentColor = "#6366f1", LevelDifficulty = 1, Points = 100, IsActive = true },
+                new CardItem { CardId = 2, Title = "كوكب زحل", Icon = "🪐", Category = "الفضاء", AccentColor = "#8b5cf6", LevelDifficulty = 1, Points = 100, IsActive = true },
+                new CardItem { CardId = 3, Title = "الجوهرة الماسية", Icon = "💎", Category = "كنوز", AccentColor = "#06b6d4", LevelDifficulty = 1, Points = 150, IsActive = true },
+                new CardItem { CardId = 4, Title = "التاج الملكي", Icon = "👑", Category = "كنوز", AccentColor = "#f59e0b", LevelDifficulty = 1, Points = 150, IsActive = true },
+                new CardItem { CardId = 5, Title = "الصاعقة الذهبية", Icon = "⚡", Category = "طاقة", AccentColor = "#eab308", LevelDifficulty = 1, Points = 120, IsActive = true },
+                new CardItem { CardId = 6, Title = "النجمة المضيئة", Icon = "🌟", Category = "الفضاء", AccentColor = "#ec4899", LevelDifficulty = 1, Points = 100, IsActive = true },
+                new CardItem { CardId = 7, Title = "التنين الناري", Icon = "🐉", Category = "أساطير", AccentColor = "#ef4444", LevelDifficulty = 2, Points = 200, IsActive = true },
+                new CardItem { CardId = 8, Title = "الكريستال السحري", Icon = "🔮", Category = "أساطير", AccentColor = "#a855f7", LevelDifficulty = 2, Points = 180, IsActive = true },
+                new CardItem { CardId = 9, Title = "درع الفرسان", Icon = "🛡️", Category = "مغامرة", AccentColor = "#10b981", LevelDifficulty = 2, Points = 180, IsActive = true },
+                new CardItem { CardId = 10, Title = "المفتاح الذهبي", Icon = "🗝️", Category = "كنوز", AccentColor = "#f97316", LevelDifficulty = 2, Points = 200, IsActive = true }
             );
 
             modelBuilder.Entity<Player>().HasData(

@@ -26,6 +26,7 @@ Content-Type: application/json
   "category": "رياضة",
   "accentColor": "#14b8a6",
   "levelDifficulty": 1,
+  "points": 150,
   "isActive": true
 }
 

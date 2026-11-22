@@ -14,6 +14,7 @@ export class MemoryGameService implements IGameEngineService {
     let uniqueIdCounter = 1;
 
     for (const item of selectedCards) {
+      const cardPoints = item.points && item.points > 0 ? item.points : 100;
       pairedDeck.push({
         uniqueBoardId: uniqueIdCounter++,
         cardId: item.cardId,
@@ -21,6 +22,7 @@ export class MemoryGameService implements IGameEngineService {
         icon: item.icon,
         category: item.category,
         accentColor: item.accentColor,
+        points: cardPoints,
         isFlipped: false,
         isMatched: false
       });
@@ -32,6 +34,7 @@ export class MemoryGameService implements IGameEngineService {
         icon: item.icon,
         category: item.category,
         accentColor: item.accentColor,
+        points: cardPoints,
         isFlipped: false,
         isMatched: false
       });
@@ -52,7 +55,20 @@ export class MemoryGameService implements IGameEngineService {
     );
   }
 
-  calculateScore(level: number, attempts: number, timeElapsedSeconds: number): number {
+  calculateScore(
+    level: number,
+    attempts: number,
+    timeElapsedSeconds: number,
+    matchedCardPoints?: number
+  ): number {
+    if (matchedCardPoints !== undefined) {
+      const speedBonus = Math.max(0, (level === 1 ? 280 : 360) - Math.floor(timeElapsedSeconds * 4));
+      const minOptimalAttempts = level === 1 ? 6 : 10;
+      const extraAttempts = Math.max(0, attempts - minOptimalAttempts);
+      const attemptPenalty = extraAttempts * 25;
+      return Math.max(0, matchedCardPoints + speedBonus - attemptPenalty);
+    }
+
     const basePoints = level === 1 ? 1000 : 1800;
     const minOptimalAttempts = level === 1 ? 6 : 10;
     const extraAttempts = Math.max(0, attempts - minOptimalAttempts);

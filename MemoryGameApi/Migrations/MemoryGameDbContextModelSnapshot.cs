@@ -108,6 +108,9 @@ namespace MemoryGameApi.Migrations
                     b.Property<int>("LevelDifficulty")
                         .HasColumnType("int");
 
+                    b.Property<int>("Points")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(80)
@@ -127,6 +130,7 @@ namespace MemoryGameApi.Migrations
                             Icon = "🚀",
                             IsActive = true,
                             LevelDifficulty = 1,
+                            Points = 100,
                             Title = "صاروخ الفضاء"
                         },
                         new
@@ -137,6 +141,7 @@ namespace MemoryGameApi.Migrations
                             Icon = "🪐",
                             IsActive = true,
                             LevelDifficulty = 1,
+                            Points = 100,
                             Title = "كوكب زحل"
                         },
                         new
@@ -147,6 +152,7 @@ namespace MemoryGameApi.Migrations
                             Icon = "💎",
                             IsActive = true,
                             LevelDifficulty = 1,
+                            Points = 150,
                             Title = "الجوهرة الماسية"
                         },
                         new
@@ -157,6 +163,7 @@ namespace MemoryGameApi.Migrations
                             Icon = "👑",
                             IsActive = true,
                             LevelDifficulty = 1,
+                            Points = 150,
                             Title = "التاج الملكي"
                         },
                         new
@@ -167,6 +174,7 @@ namespace MemoryGameApi.Migrations
                             Icon = "⚡",
                             IsActive = true,
                             LevelDifficulty = 1,
+                            Points = 120,
                             Title = "الصاعقة الذهبية"
                         },
                         new
@@ -177,6 +185,7 @@ namespace MemoryGameApi.Migrations
                             Icon = "🌟",
                             IsActive = true,
                             LevelDifficulty = 1,
+                            Points = 100,
                             Title = "النجمة المضيئة"
                         },
                         new
@@ -187,6 +196,7 @@ namespace MemoryGameApi.Migrations
                             Icon = "🐉",
                             IsActive = true,
                             LevelDifficulty = 2,
+                            Points = 200,
                             Title = "التنين الناري"
                         },
                         new
@@ -197,6 +207,7 @@ namespace MemoryGameApi.Migrations
                             Icon = "🔮",
                             IsActive = true,
                             LevelDifficulty = 2,
+                            Points = 180,
                             Title = "الكريستال السحري"
                         },
                         new
@@ -207,6 +218,7 @@ namespace MemoryGameApi.Migrations
                             Icon = "🛡️",
                             IsActive = true,
                             LevelDifficulty = 2,
+                            Points = 180,
                             Title = "درع الفرسان"
                         },
                         new
@@ -217,6 +229,7 @@ namespace MemoryGameApi.Migrations
                             Icon = "🗝️",
                             IsActive = true,
                             LevelDifficulty = 2,
+                            Points = 200,
                             Title = "المفتاح الذهبي"
                         });
                 });

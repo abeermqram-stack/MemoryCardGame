@@ -23,9 +23,10 @@ export class GameComponent implements OnInit, OnDestroy {
 
   attempts: number = 0;
   matchedPairsCount: number = 0;
+  matchedCardPoints: number = 0;
   totalPairsCount: number = 6;
   elapsedSeconds: number = 0;
-  currentScore: number = 1000;
+  currentScore: number = 0;
   isGameStarted: boolean = false;
   isGameWon: boolean = false;
   private timerInterval: any = null;
@@ -53,8 +54,9 @@ export class GameComponent implements OnInit, OnDestroy {
     this.totalPairsCount = level === 1 ? 6 : 10;
     this.attempts = 0;
     this.matchedPairsCount = 0;
+    this.matchedCardPoints = 0;
     this.elapsedSeconds = 0;
-    this.currentScore = level === 1 ? 1000 : 1800;
+    this.currentScore = 0;
     this.flippedCards = [];
     this.isBoardLocked = false;
     this.isGameWon = false;
@@ -82,11 +84,6 @@ export class GameComponent implements OnInit, OnDestroy {
 
     if (this.flippedCards.length === 2) {
       this.attempts++;
-      this.currentScore = this.gameEngine.calculateScore(
-        this.selectedLevel,
-        this.attempts,
-        this.elapsedSeconds
-      );
       this.checkMatch();
     }
   }
@@ -100,6 +97,13 @@ export class GameComponent implements OnInit, OnDestroy {
       second.isMatched = true;
       this.flippedCards = [];
       this.matchedPairsCount++;
+      this.matchedCardPoints += first.points;
+      this.currentScore = this.gameEngine.calculateScore(
+        this.selectedLevel,
+        this.attempts,
+        this.elapsedSeconds,
+        this.matchedCardPoints
+      );
 
       if (this.matchedPairsCount === this.totalPairsCount) {
         this.stopTimer();
@@ -107,6 +111,14 @@ export class GameComponent implements OnInit, OnDestroy {
         this.saveWinSession();
       }
     } else {
+      this.currentScore = this.matchedCardPoints > 0
+        ? this.gameEngine.calculateScore(
+            this.selectedLevel,
+            this.attempts,
+            this.elapsedSeconds,
+            this.matchedCardPoints
+          )
+        : 0;
       this.isBoardLocked = true;
       setTimeout(() => {
         first.isFlipped = false;
@@ -158,11 +170,14 @@ export class GameComponent implements OnInit, OnDestroy {
     this.stopTimer();
     this.timerInterval = setInterval(() => {
       this.elapsedSeconds++;
-      this.currentScore = this.gameEngine.calculateScore(
-        this.selectedLevel,
-        Math.max(1, this.attempts),
-        this.elapsedSeconds
-      );
+      if (this.matchedCardPoints > 0) {
+        this.currentScore = this.gameEngine.calculateScore(
+          this.selectedLevel,
+          Math.max(1, this.attempts),
+          this.elapsedSeconds,
+          this.matchedCardPoints
+        );
+      }
     }, 1000);
   }
 
