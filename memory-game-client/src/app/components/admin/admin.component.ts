@@ -25,9 +25,11 @@ export class AdminComponent implements OnInit, OnDestroy {
   private feedbackTimer: any = null;
 
   allCards: ICardItem[] = [];
+  displayedCards: ICardItem[] = [];
   players: IPlayer[] = [];
   sessions: IGameSession[] = [];
   searchKeyword: string = '';
+  selectedAdminLevel: number = 1;
 
   isEditingCard: boolean = false;
   cardForm: ICardItem = {
@@ -48,6 +50,18 @@ export class AdminComponent implements OnInit, OnDestroy {
 
   get loggedInAdmin(): IPlayer | null {
     return this.authState.getAdmin();
+  }
+
+  get level1Count(): number {
+    return this.allCards.filter(c => c.levelDifficulty === 1).length;
+  }
+
+  get level2Count(): number {
+    return this.allCards.filter(c => c.levelDifficulty === 2).length;
+  }
+
+  get visibleCards(): ICardItem[] {
+    return this.displayedCards.filter(c => c.levelDifficulty === this.selectedAdminLevel);
   }
 
   ngOnInit(): void {
@@ -86,6 +100,7 @@ export class AdminComponent implements OnInit, OnDestroy {
   loadData(): void {
     this.apiService.getAllCards().subscribe(cards => {
       this.allCards = cards;
+      this.displayedCards = cards;
     });
 
     this.apiService.getAllPlayers().subscribe(players => {
@@ -95,6 +110,24 @@ export class AdminComponent implements OnInit, OnDestroy {
     this.apiService.getAllSessions().subscribe(sessions => {
       this.sessions = sessions;
     });
+  }
+
+  selectAdminLevel(level: number): void {
+    this.selectedAdminLevel = level;
+    this.searchKeyword = '';
+    this.displayedCards = this.allCards;
+    if (!this.isEditingCard) {
+      this.cardForm.levelDifficulty = level;
+    }
+  }
+
+  onFormLevelChange(level: number): void {
+    this.cardForm.levelDifficulty = Number(level);
+    if (!this.isEditingCard) {
+      this.selectedAdminLevel = Number(level);
+      this.searchKeyword = '';
+      this.displayedCards = this.allCards;
+    }
   }
 
   loginAsAdmin(): void {
@@ -136,8 +169,10 @@ export class AdminComponent implements OnInit, OnDestroy {
     this.adminPassword = '';
     this.adminLoginError = '';
     this.allCards = [];
+    this.displayedCards = [];
     this.players = [];
     this.sessions = [];
+    this.selectedAdminLevel = 1;
     this.resetForm();
     this.showFeedback('تم تسجيل خروج المشرف بنجاح.', 'info');
   }
@@ -145,18 +180,20 @@ export class AdminComponent implements OnInit, OnDestroy {
   searchCards(): void {
     const trimmed = this.searchKeyword.trim();
     if (!trimmed) {
-      this.loadData();
-      this.showFeedback('تم عرض جميع البطاقات.', 'info');
+      this.displayedCards = this.allCards;
+      this.showFeedback(`تم عرض جميع بطاقات المستوى ${this.selectedAdminLevel === 1 ? 'الأول' : 'الثاني'}.`, 'info');
       return;
     }
 
     this.apiService.searchCards(trimmed).subscribe({
       next: cards => {
-        this.allCards = cards;
-        if (cards.length > 0) {
-          this.showFeedback(`تم العثور على ${cards.length} بطاقة مطابقة للبحث "${trimmed}".`, 'info');
+        this.displayedCards = cards;
+        const levelMatches = cards.filter(c => c.levelDifficulty === this.selectedAdminLevel).length;
+        const levelLabel = this.selectedAdminLevel === 1 ? 'الأول' : 'الثاني';
+        if (levelMatches > 0) {
+          this.showFeedback(`تم العثور على ${levelMatches} بطاقة في المستوى ${levelLabel} مطابقة للبحث "${trimmed}".`, 'info');
         } else {
-          this.showFeedback(`لا توجد بطاقات مطابقة للبحث "${trimmed}".`, 'info');
+          this.showFeedback(`لا توجد بطاقات في المستوى ${levelLabel} مطابقة للبحث "${trimmed}".`, 'info');
         }
       },
       error: () => {
@@ -167,8 +204,8 @@ export class AdminComponent implements OnInit, OnDestroy {
 
   clearSearch(): void {
     this.searchKeyword = '';
-    this.loadData();
-    this.showFeedback('تم إلغاء التصفية وإظهار جميع البطاقات.', 'info');
+    this.displayedCards = this.allCards;
+    this.showFeedback(`تم إلغاء التصفية وإظهار جميع بطاقات المستوى ${this.selectedAdminLevel === 1 ? 'الأول' : 'الثاني'}.`, 'info');
   }
 
   saveCard(): void {
@@ -199,9 +236,11 @@ export class AdminComponent implements OnInit, OnDestroy {
     if (this.isEditingCard) {
       this.apiService.updateCard(payload.cardId, payload).subscribe({
         next: () => {
+          this.selectedAdminLevel = payload.levelDifficulty;
+          this.searchKeyword = '';
           this.resetForm();
           this.loadData();
-          this.showFeedback(`تم تعديل البطاقة "${title}" (${points} نقطة) بنجاح.`, 'success');
+          this.showFeedback(`تم تعديل البطاقة "${title}" (${points} نقطة) بنجاح وتحديثها في اللعب.`, 'success');
         },
         error: () => {
           this.showFeedback('تعذر حفظ تعديلات البطاقة، يرجى المحاولة مرة أخرى.', 'error');
@@ -212,9 +251,12 @@ export class AdminComponent implements OnInit, OnDestroy {
       this.apiService.addCard(newCard).subscribe({
         next: created => {
           const savedPoints = created?.points ?? points;
+          this.selectedAdminLevel = payload.levelDifficulty;
+          this.searchKeyword = '';
           this.resetForm();
           this.loadData();
-          this.showFeedback(`تمت إضافة البطاقة "${title}" بقيمة ${savedPoints} نقطة بنجاح.`, 'success');
+          const levelLabel = payload.levelDifficulty === 1 ? 'الأول' : 'الثاني';
+          this.showFeedback(`تمت إضافة البطاقة "${title}" بقيمة ${savedPoints} نقطة إلى المستوى ${levelLabel} وأصبحت متاحة في اللعب.`, 'success');
         },
         error: () => {
           this.showFeedback('تعذر إضافة البطاقة، يرجى التحقق من البيانات.', 'error');
@@ -305,7 +347,7 @@ export class AdminComponent implements OnInit, OnDestroy {
       icon: '🌟',
       category: 'عام',
       accentColor: '#2c6e7f',
-      levelDifficulty: 1,
+      levelDifficulty: this.selectedAdminLevel,
       points: 100,
       isActive: true
     };

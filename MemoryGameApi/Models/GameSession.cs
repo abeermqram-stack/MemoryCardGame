@@ -14,7 +14,7 @@ namespace MemoryGameApi.Models
         public int Level { get; set; } = 1;
 
         [Required]
-        [Range(6, 10)]
+        [Range(1, 100)]
         public int PairsCount { get; set; } = 6;
 
         [Required]

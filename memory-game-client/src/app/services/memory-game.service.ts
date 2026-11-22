@@ -6,14 +6,11 @@ import { IBoardCard, ICardItem, IGameEngineService } from '../models/game.interf
 })
 export class MemoryGameService implements IGameEngineService {
 
-  buildBoardDeck(cards: ICardItem[], level: number): IBoardCard[] {
-    const requiredPairs = level === 1 ? 6 : 10;
-    const selectedCards = cards.slice(0, requiredPairs);
-
+  buildBoardDeck(cards: ICardItem[], _level: number): IBoardCard[] {
     const pairedDeck: IBoardCard[] = [];
     let uniqueIdCounter = 1;
 
-    for (const item of selectedCards) {
+    for (const item of cards) {
       const cardPoints = item.points && item.points > 0 ? item.points : 100;
       pairedDeck.push({
         uniqueBoardId: uniqueIdCounter++,

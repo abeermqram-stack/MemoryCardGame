@@ -15,27 +15,11 @@ namespace MemoryGameApi.Services
         public List<CardItem> GetAllCards() =>
             _dbContext.CardItems.OrderBy(c => c.CardId).ToList();
 
-        public List<CardItem> GetCardsByLevel(int level)
-        {
-            int requiredPairs = level == 1 ? 6 : 10;
-
-            var activeCards = _dbContext.CardItems
-                .Where(c => c.IsActive && c.LevelDifficulty <= level)
+        public List<CardItem> GetCardsByLevel(int level) =>
+            _dbContext.CardItems
+                .Where(c => c.IsActive && c.LevelDifficulty == level)
                 .OrderBy(c => c.CardId)
-                .Take(requiredPairs)
                 .ToList();
-
-            if (activeCards.Count < requiredPairs)
-            {
-                activeCards = _dbContext.CardItems
-                    .Where(c => c.IsActive)
-                    .OrderBy(c => c.CardId)
-                    .Take(requiredPairs)
-                    .ToList();
-            }
-
-            return activeCards;
-        }
 
         public List<CardItem> SearchCards(string keyword) =>
             _dbContext.CardItems

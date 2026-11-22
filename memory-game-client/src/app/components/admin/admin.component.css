@@ -43,6 +43,32 @@
   padding: 0 0.25rem;
 }
 
+.level-filter-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.45rem;
+  background-color: #e6d7be;
+  padding: 0.35rem;
+  border-radius: 12px;
+  border: 1.5px solid #8c583a;
+  margin-bottom: 1rem;
+}
+
+.level-tab-btn {
+  background: transparent;
+  border: none;
+  padding: 0.55rem 0.75rem;
+  border-radius: 9px;
+  font-weight: 700;
+  color: #593426;
+  cursor: pointer;
+}
+
+.level-tab-btn.active {
+  background-color: #593426;
+  color: #f9f6f0;
+}
+
 .card-editor-form {
   display: flex;
   flex-wrap: wrap;

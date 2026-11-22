@@ -14,7 +14,7 @@
         [ngClass]="{ 'active': selectedLevel === 1 }"
         [disabled]="isBoardLocked"
         (click)="startNewGame(1)">
-        المستوى الأول (6 أزواج)
+        المستوى الأول
       </button>
       <button
         type="button"
@@ -22,11 +22,15 @@
         [ngClass]="{ 'active': selectedLevel === 2 }"
         [disabled]="isBoardLocked"
         (click)="startNewGame(2)">
-        المستوى الثاني (10 أزواج)
+        المستوى الثاني
       </button>
     </div>
 
     <div class="counters">
+      <div class="counter-item">
+        <span>الأزواج:</span>
+        <strong>{{ matchedPairsCount }} / {{ totalPairsCount }}</strong>
+      </div>
       <div class="counter-item">
         <span>المحاولات:</span>
         <strong>{{ attempts }}</strong>
@@ -68,9 +72,14 @@
     </div>
   </div>
 
+  <section class="card-box empty-level-box" *ngIf="boardCards.length === 0">
+    لا توجد بطاقات مضافة حالياً في المستوى {{ selectedLevel === 1 ? 'الأول' : 'الثاني' }}.
+  </section>
+
   <section
     class="cards-grid"
-    [ngClass]="selectedLevel === 1 ? 'grid-6' : 'grid-10'">
+    *ngIf="boardCards.length > 0"
+    [ngClass]="totalPairsCount <= 8 ? 'grid-6' : 'grid-10'">
     <div
       class="memory-card"
       *ngFor="let card of boardCards"

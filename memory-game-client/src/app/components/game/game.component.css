@@ -102,6 +102,12 @@
   color: #593426;
 }
 
+.empty-level-box {
+  text-align: center;
+  font-weight: 700;
+  color: #593426;
+}
+
 .cards-grid {
   display: grid;
   gap: 1rem;

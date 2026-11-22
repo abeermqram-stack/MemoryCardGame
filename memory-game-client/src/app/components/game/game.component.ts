@@ -51,12 +51,13 @@ export class GameComponent implements OnInit, OnDestroy {
 
   startNewGame(level: number): void {
     this.selectedLevel = level;
-    this.totalPairsCount = level === 1 ? 6 : 10;
+    this.totalPairsCount = 0;
     this.attempts = 0;
     this.matchedPairsCount = 0;
     this.matchedCardPoints = 0;
     this.elapsedSeconds = 0;
     this.currentScore = 0;
+    this.boardCards = [];
     this.flippedCards = [];
     this.isBoardLocked = false;
     this.isGameWon = false;

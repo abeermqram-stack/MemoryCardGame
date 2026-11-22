@@ -50,7 +50,14 @@ namespace MemoryGameApi.Services
         {
             session.SessionId = 0;
             session.PlayedAt = DateTime.UtcNow;
-            session.PairsCount = session.Level == 1 ? 6 : 10;
+            if (session.PairsCount < 1)
+            {
+                session.PairsCount = _dbContext.CardItems.Count(c => c.IsActive && c.LevelDifficulty == session.Level);
+                if (session.PairsCount < 1)
+                {
+                    session.PairsCount = 1;
+                }
+            }
 
             var player = _dbContext.Players
                 .Include(p => p.Profile)
@@ -127,7 +134,7 @@ namespace MemoryGameApi.Services
                 return false;
 
             existing.Level = updatedSession.Level;
-            existing.PairsCount = updatedSession.Level == 1 ? 6 : 10;
+            existing.PairsCount = updatedSession.PairsCount >= 1 ? updatedSession.PairsCount : existing.PairsCount;
             existing.Attempts = updatedSession.Attempts;
             existing.TimeElapsedSeconds = updatedSession.TimeElapsedSeconds;
             existing.Score = updatedSession.Score;
