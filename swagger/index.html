@@ -23,16 +23,16 @@
         const seedDate = '2026-11-01T12:00:00Z';
         return {
           cards: [
-            { cardId: 1, title: 'صاروخ الفضاء', icon: '🚀', category: 'الفضاء', accentColor: '#6366f1', levelDifficulty: 1, isActive: true },
-            { cardId: 2, title: 'كوكب زحل', icon: '🪐', category: 'الفضاء', accentColor: '#8b5cf6', levelDifficulty: 1, isActive: true },
-            { cardId: 3, title: 'الجوهرة الماسية', icon: '💎', category: 'كنوز', accentColor: '#06b6d4', levelDifficulty: 1, isActive: true },
-            { cardId: 4, title: 'التاج الملكي', icon: '👑', category: 'كنوز', accentColor: '#f59e0b', levelDifficulty: 1, isActive: true },
-            { cardId: 5, title: 'الصاعقة الذهبية', icon: '⚡', category: 'طاقة', accentColor: '#eab308', levelDifficulty: 1, isActive: true },
-            { cardId: 6, title: 'النجمة المضيئة', icon: '🌟', category: 'الفضاء', accentColor: '#ec4899', levelDifficulty: 1, isActive: true },
-            { cardId: 7, title: 'التنين الناري', icon: '🐉', category: 'أساطير', accentColor: '#ef4444', levelDifficulty: 2, isActive: true },
-            { cardId: 8, title: 'الكريستال السحري', icon: '🔮', category: 'أساطير', accentColor: '#a855f7', levelDifficulty: 2, isActive: true },
-            { cardId: 9, title: 'درع الفرسان', icon: '🛡️', category: 'مغامرة', accentColor: '#10b981', levelDifficulty: 2, isActive: true },
-            { cardId: 10, title: 'المفتاح الذهبي', icon: '🗝️', category: 'كنوز', accentColor: '#f97316', levelDifficulty: 2, isActive: true }
+            { cardId: 1, title: 'صاروخ الفضاء', icon: '🚀', category: 'الفضاء', accentColor: '#6366f1', levelDifficulty: 1, points: 100, isActive: true },
+            { cardId: 2, title: 'كوكب زحل', icon: '🪐', category: 'الفضاء', accentColor: '#8b5cf6', levelDifficulty: 1, points: 100, isActive: true },
+            { cardId: 3, title: 'الجوهرة الماسية', icon: '💎', category: 'كنوز', accentColor: '#06b6d4', levelDifficulty: 1, points: 150, isActive: true },
+            { cardId: 4, title: 'التاج الملكي', icon: '👑', category: 'كنوز', accentColor: '#f59e0b', levelDifficulty: 1, points: 150, isActive: true },
+            { cardId: 5, title: 'الصاعقة الذهبية', icon: '⚡', category: 'طاقة', accentColor: '#eab308', levelDifficulty: 1, points: 120, isActive: true },
+            { cardId: 6, title: 'النجمة المضيئة', icon: '🌟', category: 'الفضاء', accentColor: '#ec4899', levelDifficulty: 1, points: 100, isActive: true },
+            { cardId: 7, title: 'التنين الناري', icon: '🐉', category: 'أساطير', accentColor: '#ef4444', levelDifficulty: 2, points: 200, isActive: true },
+            { cardId: 8, title: 'الكريستال السحري', icon: '🔮', category: 'أساطير', accentColor: '#a855f7', levelDifficulty: 2, points: 180, isActive: true },
+            { cardId: 9, title: 'درع الفرسان', icon: '🛡️', category: 'مغامرة', accentColor: '#10b981', levelDifficulty: 2, points: 180, isActive: true },
+            { cardId: 10, title: 'المفتاح الذهبي', icon: '🗝️', category: 'كنوز', accentColor: '#f97316', levelDifficulty: 2, points: 200, isActive: true }
           ],
           players: [
             { playerId: 1, username: 'عبير مقرم', email: 'abeer@gmail.com', password: '1234', role: 'Admin', createdAt: seedDate },
@@ -76,11 +76,24 @@
         };
       }
 
+      function ensureCardPoints(db) {
+        const seedPoints = { 1: 100, 2: 100, 3: 150, 4: 150, 5: 120, 6: 100, 7: 200, 8: 180, 9: 180, 10: 200 };
+        let changed = false;
+        for (const c of db.cards) {
+          if (typeof c.points !== 'number' || c.points < 10) {
+            c.points = seedPoints[c.cardId] || 100;
+            changed = true;
+          }
+        }
+        if (changed) saveDb(db);
+      }
+
       function loadDb() {
         try {
           const raw = localStorage.getItem(STORAGE_KEY);
           if (raw) {
             memoryDb = JSON.parse(raw);
+            ensureCardPoints(memoryDb);
             return memoryDb;
           }
         } catch {}
@@ -163,6 +176,7 @@
         }
         if (path === '/api/Cards' && method === 'POST') {
           const nextId = db.cards.reduce((mx, c) => Math.max(mx, c.cardId), 0) + 1;
+          const pts = Number(body?.points);
           const created = {
             cardId: nextId,
             title: (body?.title || 'بطاقة جديدة').trim(),
@@ -170,6 +184,7 @@
             category: (body?.category || 'عام').trim(),
             accentColor: body?.accentColor || '#6366f1',
             levelDifficulty: Number(body?.levelDifficulty) || 1,
+            points: !isNaN(pts) && pts >= 10 && pts <= 1000 ? pts : 100,
             isActive: body?.isActive !== false
           };
           db.cards.push(created);
