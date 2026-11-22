@@ -214,7 +214,12 @@
           const level = Number(m[1]);
           if (level < 1 || level > 2) return jsonResponse('Level must be 1 or 2', 404);
           const active = db.cards
-            .filter(c => c.isActive && c.levelDifficulty === level)
+            .filter(c =>
+              c.isActive &&
+              (level === 1
+                ? c.levelDifficulty === 1
+                : c.levelDifficulty === 2 || (c.levelDifficulty === 1 && c.cardId <= 6))
+            )
             .sort((a, b) => a.cardId - b.cardId);
           return jsonResponse(active);
         }
@@ -279,7 +284,12 @@
           }
           const nextId = db.sessions.reduce((mx, s) => Math.max(mx, s.sessionId || 0), 0) + 1;
           const level = Number(body?.level) || 1;
-          const levelPairs = db.cards.filter(c => c.isActive && c.levelDifficulty === level).length;
+          const levelPairs = db.cards.filter(c =>
+            c.isActive &&
+            (level === 1
+              ? c.levelDifficulty === 1
+              : c.levelDifficulty === 2 || (c.levelDifficulty === 1 && c.cardId <= 6))
+          ).length;
           const reqPairs = Number(body?.pairsCount);
           const created = {
             sessionId: nextId,
