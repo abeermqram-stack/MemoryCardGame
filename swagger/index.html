@@ -36,11 +36,11 @@
           ],
           players: [
             { playerId: 1, username: 'عبير مقرم', email: 'abeer@gmail.com', password: '1234', role: 'Admin', createdAt: seedDate },
-            { playerId: 2, username: 'آسيا سعيد بن عبيد', email: 'asia@memorygame.sa', password: '123456', role: 'Player', createdAt: seedDate },
-            { playerId: 3, username: 'فاطمة عصام باطويل', email: 'fatima@memorygame.sa', password: '123456', role: 'Player', createdAt: seedDate },
-            { playerId: 4, username: 'حنين عبدالعزيز باوزير', email: 'haneen@memorygame.sa', password: '123456', role: 'Player', createdAt: seedDate },
-            { playerId: 5, username: 'سارة عوض بن جوبح', email: 'sara@memorygame.sa', password: '123456', role: 'Player', createdAt: seedDate },
-            { playerId: 6, username: 'فاطمة بازياد', email: 'fatimab@memorygame.sa', password: '123456', role: 'Player', createdAt: seedDate }
+            { playerId: 2, username: 'آسيا سعيد بن عبيد', email: 'asia@gmail.com', password: '123456', role: 'Player', createdAt: seedDate },
+            { playerId: 3, username: 'فاطمة عصام باطويل', email: 'fatima@gmail.com', password: '123456', role: 'Player', createdAt: seedDate },
+            { playerId: 4, username: 'حنين عبدالعزيز باوزير', email: 'haneen@gmail.com', password: '123456', role: 'Player', createdAt: seedDate },
+            { playerId: 5, username: 'سارة عوض بن جوبح', email: 'sara@gmail.com', password: '123456', role: 'Player', createdAt: seedDate },
+            { playerId: 6, username: 'فاطمة بازياد', email: 'fatimab@gmail.com', password: '123456', role: 'Player', createdAt: seedDate }
           ],
           profiles: [
             { profileId: 1, playerId: 1, avatarEmoji: '👩‍💻', preferredTheme: 'Cosmic Indigo', highestScore: 980, totalGamesPlayed: 5 },
@@ -100,6 +100,12 @@
           } else {
             const seed = seedDefaults[c.cardId];
             c.points = seed && seed.title === c.title ? seed.points : 100;
+            changed = true;
+          }
+        }
+        for (const p of db.players) {
+          if (p.email && p.email.toLowerCase().endsWith('@memorygame.sa')) {
+            p.email = p.email.replace(/@memorygame\.sa$/i, '@gmail.com');
             changed = true;
           }
         }
