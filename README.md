@@ -25,11 +25,11 @@
 ### بيانات تسجيل الدخول للتجربة
 * **المشرف (Admin):** `abeer@gmail.com` — كلمة المرور: `1234`
 * **حسابات اللاعبات (كلمة المرور للجميع: `123456`):**
-  * `asia@memorygame.sa`
-  * `fatima@memorygame.sa`
-  * `haneen@memorygame.sa`
-  * `sara@memorygame.sa`
-  * `fatimab@memorygame.sa`
+  * `asia@gmail.com`
+  * `fatima@gmail.com`
+  * `haneen@gmail.com`
+  * `sara@gmail.com`
+  * `fatimab@gmail.com`
 
 ---
 

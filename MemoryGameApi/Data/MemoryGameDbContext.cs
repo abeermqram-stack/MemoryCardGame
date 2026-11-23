@@ -90,11 +90,11 @@ namespace MemoryGameApi.Data
 
             modelBuilder.Entity<Player>().HasData(
                 new Player { PlayerId = 1, Username = "عبير مقرم", Email = "abeer@gmail.com", Password = "1234", Role = "Admin", CreatedAt = seedDate },
-                new Player { PlayerId = 2, Username = "آسيا سعيد بن عبيد", Email = "asia@memorygame.sa", Password = "123456", Role = "Player", CreatedAt = seedDate },
-                new Player { PlayerId = 3, Username = "فاطمة عصام باطويل", Email = "fatima@memorygame.sa", Password = "123456", Role = "Player", CreatedAt = seedDate },
-                new Player { PlayerId = 4, Username = "حنين عبدالعزيز باوزير", Email = "haneen@memorygame.sa", Password = "123456", Role = "Player", CreatedAt = seedDate },
-                new Player { PlayerId = 5, Username = "سارة عوض بن جوبح", Email = "sara@memorygame.sa", Password = "123456", Role = "Player", CreatedAt = seedDate },
-                new Player { PlayerId = 6, Username = "فاطمة بازياد", Email = "fatimab@memorygame.sa", Password = "123456", Role = "Player", CreatedAt = seedDate }
+                new Player { PlayerId = 2, Username = "آسيا سعيد بن عبيد", Email = "asia@gmail.com", Password = "123456", Role = "Player", CreatedAt = seedDate },
+                new Player { PlayerId = 3, Username = "فاطمة عصام باطويل", Email = "fatima@gmail.com", Password = "123456", Role = "Player", CreatedAt = seedDate },
+                new Player { PlayerId = 4, Username = "حنين عبدالعزيز باوزير", Email = "haneen@gmail.com", Password = "123456", Role = "Player", CreatedAt = seedDate },
+                new Player { PlayerId = 5, Username = "سارة عوض بن جوبح", Email = "sara@gmail.com", Password = "123456", Role = "Player", CreatedAt = seedDate },
+                new Player { PlayerId = 6, Username = "فاطمة بازياد", Email = "fatimab@gmail.com", Password = "123456", Role = "Player", CreatedAt = seedDate }
             );
 
             modelBuilder.Entity<PlayerProfile>().HasData(

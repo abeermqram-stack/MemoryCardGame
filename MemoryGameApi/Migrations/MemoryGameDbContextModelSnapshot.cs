@@ -398,7 +398,7 @@ namespace MemoryGameApi.Migrations
                         {
                             PlayerId = 2,
                             CreatedAt = new DateTime(2026, 11, 1, 12, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "asia@memorygame.sa",
+                            Email = "asia@gmail.com",
                             Password = "123456",
                             Role = "Player",
                             Username = "آسيا سعيد بن عبيد"
@@ -407,7 +407,7 @@ namespace MemoryGameApi.Migrations
                         {
                             PlayerId = 3,
                             CreatedAt = new DateTime(2026, 11, 1, 12, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "fatima@memorygame.sa",
+                            Email = "fatima@gmail.com",
                             Password = "123456",
                             Role = "Player",
                             Username = "فاطمة عصام باطويل"
@@ -416,7 +416,7 @@ namespace MemoryGameApi.Migrations
                         {
                             PlayerId = 4,
                             CreatedAt = new DateTime(2026, 11, 1, 12, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "haneen@memorygame.sa",
+                            Email = "haneen@gmail.com",
                             Password = "123456",
                             Role = "Player",
                             Username = "حنين عبدالعزيز باوزير"
@@ -425,7 +425,7 @@ namespace MemoryGameApi.Migrations
                         {
                             PlayerId = 5,
                             CreatedAt = new DateTime(2026, 11, 1, 12, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "sara@memorygame.sa",
+                            Email = "sara@gmail.com",
                             Password = "123456",
                             Role = "Player",
                             Username = "سارة عوض بن جوبح"
@@ -434,7 +434,7 @@ namespace MemoryGameApi.Migrations
                         {
                             PlayerId = 6,
                             CreatedAt = new DateTime(2026, 11, 1, 12, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "fatimab@memorygame.sa",
+                            Email = "fatimab@gmail.com",
                             Password = "123456",
                             Role = "Player",
                             Username = "فاطمة بازياد"
