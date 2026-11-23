@@ -170,6 +170,51 @@
         });
       }
 
+      function createDemoJwt(player) {
+        const enc = (obj) => btoa(unescape(encodeURIComponent(JSON.stringify(obj)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+        const header = enc({ alg: 'HS256', typ: 'JWT' });
+        const payload = enc({
+          sub: String(player.playerId),
+          name: player.username,
+          email: player.email,
+          role: player.role,
+          iss: 'MemoryGameApi',
+          aud: 'MemoryGameClient',
+          exp: Math.floor(Date.now() / 1000) + 7200
+        });
+        return `${header}.${payload}.demo-jwt-signature`;
+      }
+
+      function parseAuthHeader(init, input) {
+        let auth = null;
+        const headers = (init && init.headers) || (typeof input !== 'string' && input.headers) || null;
+        if (headers) {
+          if (typeof headers.get === 'function') {
+            auth = headers.get('Authorization') || headers.get('authorization');
+          } else {
+            for (const k of Object.keys(headers)) {
+              if (k.toLowerCase() === 'authorization') {
+                auth = headers[k];
+                break;
+              }
+            }
+          }
+        }
+        if (!auth || !auth.toLowerCase().startsWith('bearer ')) return null;
+        const token = auth.slice(7).trim();
+        const parts = token.split('.');
+        if (parts.length !== 3) return null;
+        try {
+          const b64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+          const json = decodeURIComponent(escape(atob(b64)));
+          const payload = JSON.parse(json);
+          if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) return null;
+          return payload;
+        } catch {
+          return null;
+        }
+      }
+
       const originalFetch = window.fetch.bind(window);
       window.fetch = async function (input, init) {
         const urlStr = typeof input === 'string' ? input : input.url;
@@ -186,13 +231,55 @@
           try { body = JSON.parse(init.body); } catch { body = null; }
         }
 
+        const authUser = parseAuthHeader(init, input);
+        const requireAuth = () => authUser ? null : jsonResponse({ code: 'UNAUTHORIZED', message: 'يجب تسجيل الدخول وتمرير رمز JWT في Authorization Bearer' }, 401);
+        const requireAdmin = () => {
+          if (!authUser) return jsonResponse({ code: 'UNAUTHORIZED', message: 'يجب تسجيل الدخول كمشرف (Admin) وتمرير رمز JWT' }, 401);
+          if ((authUser.role || '').toLowerCase() !== 'admin') return jsonResponse({ code: 'FORBIDDEN', message: 'هذه العملية مخصصة للمشرف (Admin) فقط' }, 403);
+          return null;
+        };
+
         const db = loadDb();
+
+        // --- Auth (JWT) ---
+        if (path === '/api/Auth/login' && method === 'POST') {
+          const email = (body?.email || '').trim().toLowerCase();
+          const password = body?.password || '';
+          if (!email || !password) return jsonResponse({ code: 'MISSING_CREDENTIALS', message: 'الرجاء إدخال البريد الإلكتروني وكلمة المرور' }, 400);
+          const p = db.players.find(x => x.email.toLowerCase() === email);
+          if (!p) return jsonResponse({ code: 'ACCOUNT_NOT_FOUND', message: 'لا يوجد حساب مسجّل بهذا البريد الإلكتروني، يجب عليك إنشاء حساب جديد أولاً.' }, 404);
+          if (p.password !== password) return jsonResponse({ code: 'INVALID_PASSWORD', message: 'كلمة المرور غير صحيحة' }, 401);
+          return jsonResponse({ token: createDemoJwt(p), player: hydratePlayer(db, p) });
+        }
+        if (path === '/api/Auth/register' && method === 'POST') {
+          const email = (body?.email || '').trim();
+          const username = (body?.username || '').trim();
+          const password = body?.password || '';
+          if (!email || !username || !password) return jsonResponse({ code: 'MISSING_FIELDS', message: 'الرجاء تعبئة الاسم والبريد الإلكتروني وكلمة المرور' }, 400);
+          if (db.players.some(p => p.email.toLowerCase() === email.toLowerCase())) return jsonResponse({ code: 'EMAIL_EXISTS', message: 'هذا البريد الإلكتروني مسجّل مسبقاً' }, 409);
+          const nextPId = db.players.reduce((mx, p) => Math.max(mx, p.playerId), 0) + 1;
+          const nextPrId = db.profiles.reduce((mx, pr) => Math.max(mx, pr.profileId), 0) + 1;
+          const created = { playerId: nextPId, username, email, password, role: 'Player', createdAt: new Date().toISOString() };
+          const profile = { profileId: nextPrId, playerId: nextPId, avatarEmoji: '👤', preferredTheme: 'Default', highestScore: 0, totalGamesPlayed: 0 };
+          db.players.push(created);
+          db.profiles.push(profile);
+          saveDb(db);
+          return jsonResponse({ token: createDemoJwt(created), player: hydratePlayer(db, created) });
+        }
+        if (path === '/api/Auth/me' && method === 'GET') {
+          const err = requireAuth();
+          if (err) return err;
+          const p = db.players.find(x => String(x.playerId) === String(authUser.sub));
+          return p ? jsonResponse(hydratePlayer(db, p)) : jsonResponse({ code: 'ACCOUNT_NOT_FOUND', message: 'تم حذف هذا الحساب من قاعدة البيانات' }, 404);
+        }
 
         // --- Cards ---
         if (path === '/api/Cards' && method === 'GET') {
           return jsonResponse([...db.cards].sort((a, b) => a.cardId - b.cardId));
         }
         if (path === '/api/Cards' && method === 'POST') {
+          const err = requireAdmin();
+          if (err) return err;
           const nextId = Math.max(10, db.cards.reduce((mx, c) => Math.max(mx, c.cardId), 0)) + 1;
           const pts = Number(body?.points);
           const created = {
@@ -229,6 +316,8 @@
           return jsonResponse(db.cards.filter(c => c.title.toLowerCase().includes(kw) || c.category.toLowerCase().includes(kw)));
         }
         if ((m = path.match(/^\/api\/Cards\/(\d+)\/update-title$/)) && method === 'PUT') {
+          const err = requireAdmin();
+          if (err) return err;
           const id = Number(m[1]);
           const title = (body?.title || '').trim();
           if (!title) return jsonResponse('New title cannot be empty.', 400);
@@ -245,6 +334,8 @@
             return idx === -1 ? jsonResponse('No Card was found', 404) : jsonResponse(db.cards[idx]);
           }
           if (method === 'PUT') {
+            const err = requireAdmin();
+            if (err) return err;
             if (idx === -1) return jsonResponse('No Card was found', 404);
             const pts = Number(body?.points);
             db.cards[idx] = {
@@ -257,6 +348,8 @@
             return jsonResponse(db.cards[idx]);
           }
           if (method === 'DELETE') {
+            const err = requireAdmin();
+            if (err) return err;
             if (idx === -1) return jsonResponse('No Card was found', 404);
             db.cards.splice(idx, 1);
             saveDb(db);
@@ -278,7 +371,12 @@
           return jsonResponse(list.slice((pageIndex - 1) * pageSize, pageIndex * pageSize));
         }
         if (path === '/api/GameSessions' && method === 'POST') {
-          const player = db.players.find(p => p.playerId === Number(body?.playerId));
+          const err = requireAuth();
+          if (err) return err;
+          const targetPlayerId = (authUser.role || '').toLowerCase() === 'admin'
+            ? Number(body?.playerId)
+            : Number(authUser.sub);
+          const player = db.players.find(p => p.playerId === targetPlayerId);
           if (!player) {
             return jsonResponse({ code: 'ACCOUNT_NOT_FOUND', message: 'الحساب غير موجود، يرجى إنشاء حساب جديد.' }, 404);
           }
@@ -338,6 +436,8 @@
             return jsonResponse({ ...s, player: p ? stripPassword(p) : null });
           }
           if (method === 'PUT') {
+            const err = requireAdmin();
+            if (err) return err;
             if (idx === -1) return jsonResponse('No Session was found', 404);
             const existing = db.sessions[idx];
             db.sessions[idx] = { ...existing, ...body, sessionId: id, playerId: existing.playerId };
@@ -346,6 +446,8 @@
             return jsonResponse(db.sessions[idx]);
           }
           if (method === 'DELETE') {
+            const err = requireAdmin();
+            if (err) return err;
             if (idx === -1) return jsonResponse('No Session was found', 404);
             const playerId = db.sessions[idx].playerId;
             db.sessions.splice(idx, 1);
@@ -357,6 +459,8 @@
 
         // --- Players ---
         if (path === '/api/Players' && method === 'GET') {
+          const err = requireAdmin();
+          if (err) return err;
           return jsonResponse(db.players.map(p => hydratePlayer(db, p)));
         }
         if (path === '/api/Players/login' && method === 'GET') {
@@ -375,6 +479,8 @@
           return jsonResponse(hydratePlayer(db, p));
         }
         if ((m = path.match(/^\/api\/Players\/search\/(.+)$/)) && method === 'GET') {
+          const err = requireAdmin();
+          if (err) return err;
           const kw = decodeURIComponent(m[1]).toLowerCase();
           const matched = db.players
             .filter(p => p.username.toLowerCase().includes(kw) || p.email.toLowerCase().includes(kw))
@@ -418,9 +524,19 @@
           const id = Number(m[1]);
           const idx = db.players.findIndex(p => p.playerId === id);
           if (method === 'GET') {
+            const err = requireAuth();
+            if (err) return err;
+            if ((authUser.role || '').toLowerCase() !== 'admin' && String(authUser.sub) !== String(id)) {
+              return jsonResponse({ code: 'FORBIDDEN', message: 'غير مصرح بالوصول إلى هذا الحساب' }, 403);
+            }
             return idx === -1 ? jsonResponse('No Player was found', 404) : jsonResponse(hydratePlayer(db, db.players[idx]));
           }
           if (method === 'PUT') {
+            const err = requireAuth();
+            if (err) return err;
+            if ((authUser.role || '').toLowerCase() !== 'admin' && String(authUser.sub) !== String(id)) {
+              return jsonResponse({ code: 'FORBIDDEN', message: 'غير مصرح بتعديل هذا الحساب' }, 403);
+            }
             if (idx === -1) return jsonResponse('No Player was found', 404);
             const email = (body?.email || db.players[idx].email).trim();
             if (db.players.some(p => p.playerId !== id && p.email.toLowerCase() === email.toLowerCase())) {
@@ -438,6 +554,8 @@
             return jsonResponse(hydratePlayer(db, db.players[idx]));
           }
           if (method === 'DELETE') {
+            const err = requireAdmin();
+            if (err) return err;
             if (idx === -1) {
               return jsonResponse({ code: 'ACCOUNT_NOT_FOUND', message: 'لم يتم العثور على الحساب' }, 404);
             }
