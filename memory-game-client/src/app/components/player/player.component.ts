@@ -72,8 +72,9 @@ export class PlayerComponent implements OnInit {
     }
 
     this.apiService.login(this.playerLoginEmail.trim(), this.playerLoginPassword).subscribe({
-      next: player => {
-        this.authState.setPlayer(player);
+      next: auth => {
+        const player = auth.player;
+        this.authState.setPlayer(player, auth.token);
         this.playerLoginEmail = '';
         this.playerLoginPassword = '';
         this.showCreateAccountHint = false;
@@ -123,8 +124,9 @@ export class PlayerComponent implements OnInit {
     };
 
     this.apiService.registerPlayer(newPlayer).subscribe({
-      next: created => {
-        this.authState.setPlayer(created);
+      next: auth => {
+        const created = auth.player;
+        this.authState.setPlayer(created, auth.token);
         this.playerRegName = '';
         this.playerRegEmail = '';
         this.playerRegPassword = '';

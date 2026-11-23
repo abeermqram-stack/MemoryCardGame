@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
+  IAuthResponse,
   ICardItem,
   IGameApiClient,
   IGameSession,
@@ -65,15 +66,16 @@ export class GameApiService implements IGameApiClient {
     return this.http.get<IPlayer>(`${this.apiUrl}/Players/${id}`);
   }
 
-  login(email: string, password: string): Observable<IPlayer> {
-    const params = new HttpParams()
-      .set('email', email)
-      .set('password', password);
-    return this.http.get<IPlayer>(`${this.apiUrl}/Players/login`, { params });
+  getCurrentUser(): Observable<IPlayer> {
+    return this.http.get<IPlayer>(`${this.apiUrl}/Auth/me`);
   }
 
-  registerPlayer(player: Partial<IPlayer>): Observable<IPlayer> {
-    return this.http.post<IPlayer>(`${this.apiUrl}/Players`, player);
+  login(email: string, password: string): Observable<IAuthResponse> {
+    return this.http.post<IAuthResponse>(`${this.apiUrl}/Auth/login`, { email, password });
+  }
+
+  registerPlayer(player: Partial<IPlayer>): Observable<IAuthResponse> {
+    return this.http.post<IAuthResponse>(`${this.apiUrl}/Auth/register`, player);
   }
 
   deletePlayer(id: number): Observable<any> {

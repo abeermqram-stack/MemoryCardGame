@@ -1,5 +1,14 @@
 @baseUrl = http://localhost:5150
 
+### 0. Authenticate as Admin (returns JWT Token)
+POST {{baseUrl}}/api/Auth/login
+Content-Type: application/json
+
+{
+  "email": "abeer@gmail.com",
+  "password": "1234"
+}
+
 ### 1. Get all cards
 GET {{baseUrl}}/api/Cards
 Accept: application/json

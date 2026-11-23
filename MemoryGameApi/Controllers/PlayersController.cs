@@ -1,5 +1,7 @@
+using System.Security.Claims;
 using MemoryGameApi.Models;
 using MemoryGameApi.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MemoryGameApi.Controllers
@@ -16,14 +18,21 @@ namespace MemoryGameApi.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public IActionResult GetAllPlayers()
         {
             return Ok(_playerService.GetAllPlayers());
         }
 
         [HttpGet("{id:int:min(1)}")]
+        [Authorize]
         public IActionResult GetPlayerById([FromRoute] int id)
         {
+            var isAdmin = User.IsInRole("Admin");
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!isAdmin && currentUserId != id.ToString())
+                return Forbid();
+
             var player = _playerService.GetPlayerById(id);
             if (player == null)
                 return NotFound("No Player was found");
@@ -32,6 +41,7 @@ namespace MemoryGameApi.Controllers
         }
 
         [HttpGet("login")]
+        [AllowAnonymous]
         public IActionResult Login([FromQuery] string email, [FromQuery] string password)
         {
             if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
@@ -48,12 +58,14 @@ namespace MemoryGameApi.Controllers
         }
 
         [HttpGet("search/{keyword:alpha}")]
+        [Authorize(Roles = "Admin")]
         public IActionResult SearchPlayers([FromRoute] string keyword)
         {
             return Ok(_playerService.SearchPlayersByName(keyword));
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public IActionResult AddPlayer([FromBody] Player player)
         {
             if (string.IsNullOrWhiteSpace(player.Email) || string.IsNullOrWhiteSpace(player.Username) || string.IsNullOrWhiteSpace(player.Password))
@@ -67,8 +79,14 @@ namespace MemoryGameApi.Controllers
         }
 
         [HttpPut("{id:int:min(1)}")]
+        [Authorize]
         public IActionResult UpdatePlayer([FromRoute] int id, [FromBody] Player player)
         {
+            var isAdmin = User.IsInRole("Admin");
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!isAdmin && currentUserId != id.ToString())
+                return Forbid();
+
             var byEmail = _playerService.GetPlayerByEmail(player.Email);
             if (byEmail != null && byEmail.PlayerId != id)
                 return Conflict(new { code = "EMAIL_EXISTS", message = "هذا البريد الإلكتروني مستخدم لحساب آخر" });
@@ -82,6 +100,7 @@ namespace MemoryGameApi.Controllers
         }
 
         [HttpDelete("{id:int:min(1)}")]
+        [Authorize(Roles = "Admin")]
         public IActionResult DeletePlayer([FromRoute] int id)
         {
             var existing = _playerService.GetPlayerById(id);

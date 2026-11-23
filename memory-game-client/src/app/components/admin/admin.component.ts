@@ -145,9 +145,10 @@ export class AdminComponent implements OnInit, OnDestroy {
     }
 
     this.apiService.login(this.adminEmail.trim(), this.adminPassword).subscribe({
-      next: user => {
+      next: auth => {
+        const user = auth.player;
         if (user.role === 'Admin') {
-          this.authState.setAdmin(user);
+          this.authState.setAdmin(user, auth.token);
           this.adminEmail = '';
           this.adminPassword = '';
           this.loadData();

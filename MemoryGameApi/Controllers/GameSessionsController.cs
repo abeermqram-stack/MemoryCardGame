@@ -1,5 +1,7 @@
+using System.Security.Claims;
 using MemoryGameApi.Models;
 using MemoryGameApi.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MemoryGameApi.Controllers
@@ -44,8 +46,16 @@ namespace MemoryGameApi.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult AddSession([FromBody] GameSession session)
         {
+            var isAdmin = User.IsInRole("Admin");
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!isAdmin && int.TryParse(currentUserId, out var parsedId))
+            {
+                session.PlayerId = parsedId;
+            }
+
             var created = _sessionService.AddSession(session);
             if (created == null)
                 return NotFound(new { code = "ACCOUNT_NOT_FOUND", message = "الحساب غير موجود، يرجى إنشاء حساب جديد." });
@@ -54,6 +64,7 @@ namespace MemoryGameApi.Controllers
         }
 
         [HttpPut("{id:int:min(1)}")]
+        [Authorize(Roles = "Admin")]
         public IActionResult UpdateSession([FromRoute] int id, [FromBody] GameSession session)
         {
             session.SessionId = id;
@@ -65,6 +76,7 @@ namespace MemoryGameApi.Controllers
         }
 
         [HttpDelete("{id:int:min(1)}")]
+        [Authorize(Roles = "Admin")]
         public IActionResult DeleteSession([FromRoute] int id)
         {
             var deleted = _sessionService.DeleteSession(id);

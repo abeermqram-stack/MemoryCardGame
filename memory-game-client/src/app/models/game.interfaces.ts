@@ -73,6 +73,11 @@ export interface IGameSession {
   player?: IPlayer;
 }
 
+export interface IAuthResponse {
+  token: string;
+  player: IPlayer;
+}
+
 export interface IGameEngineService {
   buildBoardDeck(cards: ICardItem[], level: number): IBoardCard[];
   areCardsMatching(firstCard: IBoardCard, secondCard: IBoardCard): boolean;
@@ -92,16 +97,19 @@ export interface IGameApiClient {
   deleteSession(id: number): Observable<any>;
   getAllPlayers(): Observable<IPlayer[]>;
   getPlayerById(id: number): Observable<IPlayer>;
-  login(email: string, password: string): Observable<IPlayer>;
-  registerPlayer(player: Partial<IPlayer>): Observable<IPlayer>;
+  getCurrentUser(): Observable<IPlayer>;
+  login(email: string, password: string): Observable<IAuthResponse>;
+  registerPlayer(player: Partial<IPlayer>): Observable<IAuthResponse>;
   deletePlayer(id: number): Observable<any>;
 }
 
 export interface IAuthStateService {
   getPlayer(): IPlayer | null;
-  setPlayer(player: IPlayer | null): void;
+  getPlayerToken(): string | null;
+  setPlayer(player: IPlayer | null, token?: string | null): void;
   getAdmin(): IPlayer | null;
-  setAdmin(admin: IPlayer | null): void;
+  getAdminToken(): string | null;
+  setAdmin(admin: IPlayer | null, token?: string | null): void;
   logoutPlayer(): void;
   logoutAdmin(): void;
 }

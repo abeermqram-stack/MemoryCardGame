@@ -1,5 +1,6 @@
 using MemoryGameApi.Models;
 using MemoryGameApi.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MemoryGameApi.Controllers
@@ -48,6 +49,7 @@ namespace MemoryGameApi.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public IActionResult AddCard([FromBody] CardItem card)
         {
             var created = _cardService.AddCard(card);
@@ -55,6 +57,7 @@ namespace MemoryGameApi.Controllers
         }
 
         [HttpPut("{id:int:min(1)}")]
+        [Authorize(Roles = "Admin")]
         public IActionResult UpdateCard([FromRoute] int id, [FromBody] CardItem card)
         {
             card.CardId = id;
@@ -66,6 +69,7 @@ namespace MemoryGameApi.Controllers
         }
 
         [HttpPut("{id:int:min(1)}/update-title")]
+        [Authorize(Roles = "Admin")]
         public IActionResult UpdateCardTitle([FromRoute] int id, [FromBody] UpdateCardTitleDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.Title))
@@ -85,6 +89,7 @@ namespace MemoryGameApi.Controllers
         }
 
         [HttpDelete("{id:int:min(1)}")]
+        [Authorize(Roles = "Admin")]
         public IActionResult DeleteCard([FromRoute] int id)
         {
             var deleted = _cardService.DeleteCard(id);
